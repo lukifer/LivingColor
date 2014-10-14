@@ -15,18 +15,14 @@ var LivingColor = {
 
 	"$style": false,
 	"styles": {
-		"#LivingColor": "position: fixed; bottom: 10px; right: 10px; width: 320px; z-index: 9999; overflow: hidden; "
-			+"padding: 0; background-color: #ccc; border-radius: 5px; box-shadow: 0 0px 7px 0 black;"
-			+"background-image: url('"+LivingColorImageBG()+"')"
-			+"",
-//			+"opacity: 0.3; transition: opacity 250ms linear;",
+		"#LivingColor": "position: fixed; bottom: 10px; right: 10px; width: 320px; max-height: 350px; z-index: 9999; "
+			+"overflow: hidden; padding: 0; background-color: #ccc; border-radius: 5px; box-shadow: 0 0px 7px 0 black; "
+			+"background-image: url('"+LivingColorImageBG()+"'); "
+			+"transition: top 250ms ease-in-out, bottom 250ms ease-in-out, width 250ms ease-in-out, max-height 250ms ease-in-out;"
+			+"transform: translateZ(0);",
 		"#LivingColor.top": "bottom: auto; top: 10px;",
-		"#LivingColor:hover, #LivingColor.active": "opacity: 1.0;",
-//		"#LivingColor input": "opacity: 0.5;",
-		"#LivingColor:hover input, #LivingColor.active input": "opacity: 1.0;",
-		"#LivingColor h4": "position: relative; color: #ddd; background-color: #222; "
-			+"font-size: 12px; font-family: Helvetica; margin: 0; padding: 5px 0 3px; height: 12px;"
-			+"user-select: none; -moz-user-select: none; -webkit-user-select: none;",
+		"#LivingColor h4": "position: relative; color: #ddd; background-color: #222; user-select: none; "
+			+"font-size: 12px; font-family: Helvetica; margin: 0; padding: 5px 0 3px; height: 12px;",
 		"#LivingColor h4 a": "display: block; position: absolute; cursor: pointer; opacity: 0.4;",
 		"#LivingColor h4 a:hover": "cursor: pointer; opacity: 0.8;",
 		"#LivingColor h4 a::after": "content: ''; position: absolute; display: block;",
@@ -38,20 +34,26 @@ var LivingColor = {
 		"#LivingColor.top h4 .move::after": "border-width: 10px 5px 0 5px; border-color: #ddd transparent transparent transparent;",
 		"#LivingColor h4 .minimize": "right: 3px; top: 0; width: 22px; height: 20px;",
 		"#LivingColor h4 .minimize::after": "right: 5px; bottom: 4px; height: 3px; width: 12px; background: #ddd; border-radius: 1px;",
-		"#LivingColor .wrap": "padding: 0 8px; margin: 8px 0; transition: height 200ms linear; -moz-transition: height 200ms linear; -webkit-transition: height 200ms linear;",
-		"#LivingColor.minimized .wrap": "height: 0; margin: 0; overflow: hidden;",
+		"#LivingColor .wrap": "padding: 8px; margin: 0; transition: width 250ms linear;",
+		"#LivingColor.minimized": "width: 27px; max-height: 20px; ",
+		"#LivingColor h4 *": "transition: opacity 120ms linear;",
+		"#LivingColor.minimized .wrap": "overflow: hidden;",
+		"#LivingColor.minimized .minimizehide": "opacity: 0;",
 		"#LivingColor ul": "margin: 0; padding: 0; max-height: 290px;",
 		"#LivingColor li": "list-style: none; white-space: nowrap; height: 29px; min-height: 29px;",
 		"#LivingColor li input": "font-size: 12px; padding: 5px; margin: 2px 3px; border: 0; border-radius: 3px; box-shadow: 0 0 5px 0px black inset;",
 		"#LivingColor li .selector": "width: 144px;",
 		"#LivingColor li .color": "width: 48px; text-align: center; ",
+		"#LivingColor .controls": "margin-top: 5px; white-space: nowrap;",
 		"#LivingColor .controls > *": "margin: 0 5px;",
-		"#LivingColor .controls": "margin-top: 5px;",
 		"#LivingColor .controls input": "",
 		"#LivingColor .controls select": "",
 		"#LivingColorAdd": "float: right;",
 
-		"#LivingColor li a.filters": "display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; cursor: pointer; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; background-image: url('"+LivingColorFiltersIcon()+"')",
+		"#LivingColor li a.filters": "display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; cursor: pointer; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; background-image: url('"+LivingColorFiltersIcon()+"'); opacity: 0.5; ",
+
+		"#LivingColor li a.filters:hover": "opacity: 1.0;",
+		"#LivingColor li a.filters.active": "opacity: 1.0;",
 
 		"#LivingColorFilters": "z-index: 10000; position: fixed; right: 5px; display:none;"
 			+"background: threedface; border-color: threedhighlight threedshadow threedshadow threedhighlight;"
@@ -73,7 +75,8 @@ var LivingColor = {
 		"#LivingColorFilters .reset": "text-align: center;",
 		
 		"#jscolor": "position: fixed !important;",
-		".living-color-target": "opacity: 0.5; cursor: default;",
+		
+		".living-color-target": "opacity: 0.5; cursor: default; cursor: crosshair;",
 	},
 
 	"start": function(opts)
@@ -96,7 +99,16 @@ var LivingColor = {
 		{
 			var $style = $('<style type="text/css"></style>');
 			var css = "";
-			$.each(this.styles, function(sel, val){ css += sel+" { "+val+" } "; });
+			$.each(this.styles, function(sel, val)
+			{
+				css += sel+" { "+val+" } ";
+				if($.inArray(sel, ["filters", "transform", "transition", "user-select"]) != -1)
+				{
+					css +=     "-ms-"+sel+" { "+val+" } ";
+					css +=    "-moz-"+sel+" { "+val+" } ";
+					css += "-webkit-"+sel+" { "+val+" } ";
+				}
+			});
 			//$style.append(document.createTextNode(css));
 			window['$a'] = $style;
 			$style[0].appendChild(document.createTextNode(css));
@@ -177,7 +189,7 @@ var LivingColor = {
 		var theRulesList = JSON.parse(localStorage.getItem("LC_colorRules") || "false");
 		if(!theRulesList || !theRulesList.names)
 		{
-			theRulesList = {"names": ["Default"], "active": "Default"};
+			theRulesList = {"names": ["Default Scheme"], "active": "Default Scheme"};
 			localStorage.setItem("LC_colorRules", JSON.stringify(theRulesList));
 		}
 		
@@ -238,6 +250,14 @@ var LivingColor = {
 	{
 		var $el = $(el);
 		var $li = $el.parent();
+		
+		if($el.is(".selector"))
+		{
+			LivingColor.liveColorChange($li.children("[name='color']")[0]);
+			LivingColor.liveColorChange($li.children("[name='backgroundColor']")[0]);
+			LivingColor.liveColorChange($li.children("a.filters")[0]);
+			return;
+		}
 
 		var $sel = $li.children(".selector");
 		var $col = $li.children(".textColor");
@@ -246,6 +266,8 @@ var LivingColor = {
 		var selector	= $sel.val();
 		var color		= $col.val();
 		var bgColor		= $bgc.val();
+
+		selector = $.trim(selector);
 		if(selector == "") return;
 
 		if($el.is("a.filters"))
@@ -254,17 +276,39 @@ var LivingColor = {
 			if(!filterString) filterString = "";
 
 			if(LivingColor.prefix)
+			{
 				$(selector).each(function(n, el)
 				{
-					el.style[LivingColor.prefix+'Filter'] = filterString;
-				})
+					var $el = $(el);
+					if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
+						el.style[LivingColor.prefix+'Filter'] = filterString;
+				});
+			}
 			else
+			{
 				$(selector).css("filter", filterString);
+			}
 		}
 		else
 		{
-			if(el != $bgc[0]) $(selector).css("color", color ? "#"+color : "");
-			if(el != $col[0]) $(selector).css("backgroundColor", bgColor ? "#"+bgColor : "");
+			if(el != $bgc[0])
+			{
+				$(selector).each(function(n, el)
+				{
+					var $el = $(el);
+					if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
+						$el.css("color", color ? "#"+color : "");
+				});
+			}
+			if(el != $col[0])
+			{
+				$(selector).each(function(n, el)
+				{
+					var $el = $(el);
+					if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
+						$el.css("backgroundColor", bgColor ? "#"+bgColor : "");
+				});
+			}
 		}
 	},
 	
@@ -306,7 +350,15 @@ var LivingColor = {
 			{
 				$(last)
 					.css("color", "")
-					.css("backgroundColor", "");
+					.css("backgroundColor", "")
+					.each(function(n, el)
+					{
+						if(LivingColor.prefix)
+							el.style[LivingColor.prefix+'Filter'] = '';
+						else
+							el.style['filter'] = '';
+					})
+					;
 			}
 			
 			// Cache the selector for use next time
@@ -333,13 +385,33 @@ var LivingColor = {
 	"togglePosition": function(e)
 	{
 		$LivingColor = $("#LivingColor");
-		$LivingColor.toggleClass("top");
-
-		if(typeof LivingColor.rulesList === "object")
+		var transitionEnd = LivingColor.prefix && LivingColor.prefix != "moz"
+			? LivingColor.prefix+"TransitionEnd" : "transitionend";
+		
+		if($LivingColor.hasClass("top"))
 		{
-			LivingColor.rulesList.top = $LivingColor.hasClass("top") ? 1 : 0;
-			localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
+			$LivingColor.one(transitionEnd, function()
+			{
+				$LivingColor.removeClass("top");
+				$LivingColor.css("top", "");
+			});
+			$LivingColor.css("top", (window.innerHeight - $LivingColor.height() - 10)+"px");
+
+			LivingColor.rulesList.top = 0;
 		}
+		else // if .hasClass("top") == false
+		{
+			$LivingColor.one(transitionEnd, function()
+			{
+				$LivingColor.addClass("top");
+				$LivingColor.css("bottom", "");
+			});
+			$LivingColor.css("bottom", (window.innerHeight - $LivingColor.height() - 10)+"px");
+			
+			LivingColor.rulesList.top = 1;
+		}
+		
+		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
 	},
 	
 	"toggleTargetMode": function(e)
@@ -445,24 +517,6 @@ var LivingColor = {
 		else
 			return "filter";
 	},
-/*
-	"fetchFilterVals": function()
-	{
-		var filterVals = {
-			"brightness": "100",
-			"contrast": "100",
-			"saturate": "100",
-			"opacity": "100",
-			"hue-rotate": "0",
-			"invert": "0",
-			"grayscale": "0",
-			"sepia": "0",
-			"blur": "0",
-		};
-		
-		return filterVals;
-	},
-*/
 	
 	// Toggle and move Filters modal
 	"clickFilters": function()
@@ -611,6 +665,7 @@ var LivingColor = {
 		var filterString = filterVals.join(" ");
 		$a	.data("filters", filterString)
 			.data("alt", filterString)
+			.toggleClass("active", filterString !== "")
 			;
 		
 		$("#LivingColorFiltersTextarea").val((LivingColor.prefix?"-"+LivingColor.prefix+"-":"")+"filter: "+filterString);
@@ -706,7 +761,7 @@ var LivingColor = {
 	{
 		var filters = LivingColor.getFilterDefaults();
 		
-		var html = '<div id="LivingColorFilters"><ul>'
+		var html = '<div id="LivingColorFilters" class="LivingColorImmune"><ul>'
 		$.each(filters, function(name, obj)
 		{
 			var shortname = name.replace(' ', '-').toLowerCase();
@@ -730,7 +785,7 @@ var LivingColor = {
 		
 		if($div.length < 1)
 		{
-			$("body").append('<div id="LivingColor" draggable="true"></div>');
+			$("body").append('<div id="LivingColor" class="LivingColorImmune"></div>');
 			$div = $("#LivingColor");
 			
 			if(typeof LivingColor.rulesList === "object" && LivingColor.rulesList.top)
@@ -738,9 +793,9 @@ var LivingColor = {
 		}
 		
 		// Render add button
-		var html = '<h4><a class="target"><span>&#8982;</span></a>'
-			+'Living Color'
-			+'<a class="move"></a><a class="minimize"></a></h4>'
+		var html = '<h4><a class="target minimizehide"><span>&#8982;</span></a>'
+			+'<span class="minimizehide">Living Color</span>'
+			+'<a class="move minimizehide"></a><a class="minimize"></a></h4>'
 			+'<div class="wrap"><ul></ul>'
 			+'<div class="controls"><input type="button" id="LivingColorAdd" value="Add Rule" />';
 
@@ -751,8 +806,15 @@ var LivingColor = {
 		{
 			html += '<option value="'+name+'"'+(activeName == name ? ' selected="selected"' : '')+'>'+name+'</option>';
 		});
+/*
+		html += '<option disabled="disabled"></option>';
+		html += '<option>New Scheme...</option>';
+		html += '<option>Copy "'+activeName+'"...</option>';
+		html += '<option>Rename "'+activeName+'"...</option>';
+		html += '<option>Delete "'+activeName+'"...</option>';
+*/
 		html += '</select>';
-		html += '<input type="button" id="LivingColorListSave" value="Save...">';
+html += '<input type="button" id="LivingColorListSave" value="Save...">';
 		html += '</div></div>';
 		$div.html(html);
 
@@ -765,6 +827,7 @@ var LivingColor = {
 
 		// Attach color picker
 		jscolor.bind();
+		$("#jscolor").addClass("LivingColorImmune");
 	},
 	
 	// Render each row of primary interface
@@ -776,7 +839,7 @@ var LivingColor = {
 		+	'<input type="text" name="selector" class="selector" value="'+rule.selector+'" placeholder="Selector (#id .class)" />'
 		+	'<input type="text" name="color" class="textColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.color+'" placeholder="Text" />'
 		+	'<input type="text" name="backgroundColor" class="backgroundColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.backgroundColor+'" placeholder="BG" />'
-		+	'<a class="filters" data-filters="'+rule.filters.join(" ")+'" title="'+rule.filters.join(" ")+'"></a>'
+		+	'<a class="filters'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="'+rule.filters.join(" ")+'"></a>'
 		+	'</li>';
 	}
 };
@@ -1513,6 +1576,7 @@ var jscolor = {
 
 			// picker border
 			p.boxB.id = "jscolor";
+			p.boxB.className = "LivingColorImmune";
 			p.boxB.style.position = 'absolute';
 			p.boxB.style.clear = 'both';
 			p.boxB.style.left = x+'px';
