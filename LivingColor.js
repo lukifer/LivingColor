@@ -5,8 +5,8 @@
 // License: http://opensource.org/licenses/mit-license.php
 
 
-var LivingColor = {
-
+var LivingColor =
+{
 	"rules": [],
 	"rulesList": [],
 	"options": {},
@@ -14,7 +14,8 @@ var LivingColor = {
 	"prefix": "",
 
 	"$style": false,
-	"styles": {
+	"styles":
+	{
 		"#LivingColor": "position: fixed; bottom: 10px; right: 10px; width: 320px; max-height: 350px; z-index: 9999; "
 			+"overflow: hidden; padding: 0; background-color: #ccc; border-radius: 5px; box-shadow: 0 0px 7px 0 black; "
 			+"background-image: url('"+LivingColorImageBG()+"'); "
@@ -78,11 +79,34 @@ var LivingColor = {
 		
 		".living-color-target": "opacity: 0.5; cursor: default; cursor: crosshair;",
 	},
+	
+	"attachEvents": function()
+	{
+		$(document)
+			.on("click", "#LivingColorAdd", LivingColor.addRule)
+			.on("change", "#LivingColor input[type=text]", LivingColor.inputChange)
+			.on("keydown", "#LivingColor input", LivingColor.inputKeyDown)
+			.on("click", "#LivingColor .minimize", LivingColor.minimize)
+			.on("click", "#LivingColor .move", LivingColor.togglePosition)
+			.on("click", "#LivingColor .target", LivingColor.toggleTargetMode)
+			.on("change", "#LivingColorList", LivingColor.colorListChange)
+			.on("click", "#LivingColorListSave", LivingColor.saveNewColorList)
+			.on("click", ".living-color-target", LivingColor.targetClick)
+			.on("click", "#LivingColor .filters", LivingColor.clickFilters)
+			.on("click", "#LivingColorFiltersReset", LivingColor.filtersReset)
+			.on("change mousemove", "#LivingColorFilters input[type='range']", LivingColor.sliderChange)
+			.on("change", "#LivingColorFilters input[type='number']", LivingColor.sliderValueChange)
+			.on("change", "#LivingColor li a.filters", LivingColor.filtersChange)
+			;
+			
+		// Drag functionality: currently disabled
+		//	.on("drag", "#LivingColor", LivingColor.drag)
+		//	.on("dragend", "#LivingColor", function(e){e.stopPropagation();})
+	},
 
 	"start": function(opts)
 	{
 		LivingColor.options = $.extend({
-		//	"wrapper": "body > *"
 		}, opts);
 		
 		// Figure out which prefix we'll need
@@ -109,8 +133,6 @@ var LivingColor = {
 					css += "-webkit-"+sel+" { "+val+" } ";
 				}
 			});
-			//$style.append(document.createTextNode(css));
-			window['$a'] = $style;
 			$style[0].appendChild(document.createTextNode(css));
 			this['$style'] = $style;
 			$("head")[0].appendChild($style[0]);
@@ -130,60 +152,18 @@ var LivingColor = {
 		LivingColor.render();
 
 		// Attach events
-		$(document)
-			.on("click", "#LivingColorAdd", LivingColor.addRule)
-			.on("change", "#LivingColor input[type=text]", LivingColor.inputChange)
-			.on("keydown", "#LivingColor input", LivingColor.inputKeyDown)
-			.on("click", "#LivingColor .minimize", LivingColor.minimize)
-			.on("click", "#LivingColor .move", LivingColor.togglePosition)
-			.on("click", "#LivingColor .target", LivingColor.toggleTargetMode)
-			.on("change", "#LivingColorList", LivingColor.colorListChange)
-			.on("click", "#LivingColorListSave", LivingColor.saveNewColorList)
-			.on("click", ".living-color-target", LivingColor.targetClick)
-			.on("click", "#LivingColor .filters", LivingColor.clickFilters)
-			.on("click", "#LivingColorFiltersReset", LivingColor.filtersReset)
-			.on("change mousemove", "#LivingColorFilters input[type='range']", LivingColor.sliderChange)
-			.on("change", "#LivingColorFilters input[type='number']", LivingColor.sliderValueChange)
-			.on("change", "#LivingColor li a.filters", LivingColor.filtersChange)
-		//	.on("drag", "#LivingColor", LivingColor.drag)
-		//	.on("dragend", "#LivingColor", function(e){e.stopPropagation();})
-			;
+		LivingColor.attachEvents();
 
 		// Trigger the starting rules
 		$("#LivingColor input[type=text]").change();
 		$("#LivingColor a.filters").change();
 
+		// Cache our primary interface div
 		var $div = $("#LivingColor");
-/*
-		var abortBlur = false;
-		$(document)
-			.on("mousedown touchstart", function()
-			{
-				console.log("1");
-				abortBlur = true;
-			})
-			.on("mouseup touchend", function()
-			{
-				console.log("2");
-				abortBlur = false;
-			})
-		$div
-			.on("focus", "input", function()
-			{
-				console.log("f");
-				$div.addClass("active");
-			})
-			.on("blur", "input", function()
-			{
-				if(abortBlur) return;
-				console.log("b");
-				$div.removeClass("active");
-			})
-			;
-*/
 		this["$div"] = $div;
 	},
 
+	// Fetch list of color schemes from local storage
 	"loadRulesList": function(name)
 	{
 		var theRulesList = JSON.parse(localStorage.getItem("LC_colorRules") || "false");
@@ -196,6 +176,7 @@ var LivingColor = {
 		LivingColor.rulesList = theRulesList;
 	},
 	
+	// Fetch the details of a color scheme from local storage
 	"loadRules": function(name)
 	{
 		var theRules = localStorage.getItem("LC_colorRules"+name);
@@ -211,46 +192,55 @@ var LivingColor = {
 		LivingColor.rules = theRules;
 	},
 	
+	// Clear all customized style rules
 	"resetAll": function()
 	{
 		if(LivingColor.rules.length > 0) $.each(LivingColor.rules, function(n, rule)
 		{
-			var filterRule = LivingColor.filterRule();
+			var prefixedFilterRule = LivingColor.prefixedFilterRule();
 
 			$(rule.selector)
 				.css("color", "")
 				.css("backgroundColor", "")
 				.each(function(n, el)
 				{
-					el.style[filterRule] = "";
+					el.style[prefixedFilterRule] = "";
 				})
 				;
 		});
 	},
 	
+	// Apply all customized style rules from current color scheme
 	"applyAll": function()
 	{
 		if(LivingColor.rules.length > 0) $.each(LivingColor.rules, function(n, rule)
 		{
-			var filterRule = LivingColor.filterRule();
+			var prefixedFilterRule = LivingColor.prefixedFilterRule();
 			
-			$(rule.selector)
-				.css("color", "#"+rule.color)
-				.css("backgroundColor", "#"+rule.backgroundColor)
-				.each(function(n, el)
+			$(rule.selector).each(function(n, el)
+			{
+				var $el = $(el);
+				if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
 				{
+					$el
+						.css("color", rule.color ? "#"+rule.color : "")
+						.css("backgroundColor", "#"+rule.backgroundColor)
+						;
+					
 					if(rule.filters && rule.filters.length)
-						el.style[filterRule] = rule.filters.join(" ");
-				})
-				;
+						$el[0].style[prefixedFilterRule] = rule.filters.join(" ");
+				}
+			});
 		});
 	},
 
+	// Update only the element(s) that were just changed
 	"liveColorChange": function(el)
 	{
 		var $el = $(el);
 		var $li = $el.parent();
 		
+		// If the selector was changed, manually trigger update events for all components of this rule
 		if($el.is(".selector"))
 		{
 			LivingColor.liveColorChange($li.children("[name='color']")[0]);
@@ -259,6 +249,7 @@ var LivingColor = {
 			return;
 		}
 
+		// Fetch DOM elements and values
 		var $sel = $li.children(".selector");
 		var $col = $li.children(".textColor");
 		var $bgc = $li.children(".backgroundColor");
@@ -270,27 +261,23 @@ var LivingColor = {
 		selector = $.trim(selector);
 		if(selector == "") return;
 
+		// Apply CSS image filter
 		if($el.is("a.filters"))
 		{
+			var prefixedFilterRule = LivingColor.prefixedFilterRule();
 			var filterString = $el.data("filters");
 			if(!filterString) filterString = "";
 
-			if(LivingColor.prefix)
+			$(selector).each(function(n, el)
 			{
-				$(selector).each(function(n, el)
-				{
-					var $el = $(el);
-					if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
-						el.style[LivingColor.prefix+'Filter'] = filterString;
-				});
-			}
-			else
-			{
-				$(selector).css("filter", filterString);
-			}
+				var $el = $(el);
+				if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
+					el.style[prefixedFilterRule] = filterString;
+			});
 		}
 		else
 		{
+			// Apply text color
 			if(el != $bgc[0])
 			{
 				$(selector).each(function(n, el)
@@ -300,6 +287,8 @@ var LivingColor = {
 						$el.css("color", color ? "#"+color : "");
 				});
 			}
+			
+			// Apply background color
 			if(el != $col[0])
 			{
 				$(selector).each(function(n, el)
@@ -312,6 +301,7 @@ var LivingColor = {
 		}
 	},
 	
+	// Add a blank rule
 	"addRule": function()
 	{
 		var newRule = {
@@ -328,6 +318,7 @@ var LivingColor = {
 		jscolor.bind();
 	},
 	
+	// Fired when the selector or color text boxes are altered
 	"inputChange": function(e)
 	{			
 		var $input = $(this);
@@ -348,15 +339,14 @@ var LivingColor = {
 			var last = $input.data("last-selector");
 			if(last && last != $input.val())
 			{
+				var prefixedFilterRule = LivingColor.prefixedFilterRule();
+
 				$(last)
 					.css("color", "")
 					.css("backgroundColor", "")
 					.each(function(n, el)
 					{
-						if(LivingColor.prefix)
-							el.style[LivingColor.prefix+'Filter'] = '';
-						else
-							el.style['filter'] = '';
+						el.style[prefixedFilterRule] = '';
 					})
 					;
 			}
@@ -371,17 +361,20 @@ var LivingColor = {
 		localStorage.setItem("LC_colorRules"+LivingColor.rulesList.active, JSON.stringify(LivingColor.rules));
 	},
 
+	// Listen for Escape key
 	"inputKeyDown": function(e)
 	{
 		if(e.keyCode == 27)
 			$(this).blur();
 	},
 
+	// Minimized state toggle
 	"minimize": function(e)
 	{
 		$("#LivingColor").toggleClass("minimized");
 	},
 
+	// Move to and from top/bottom position
 	"togglePosition": function(e)
 	{
 		$LivingColor = $("#LivingColor");
@@ -411,9 +404,11 @@ var LivingColor = {
 			LivingColor.rulesList.top = 1;
 		}
 		
+		// Remember position
 		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
 	},
 	
+	// Trigger DOM node targeting (crosshairs)
 	"toggleTargetMode": function(e)
 	{
 		if($("body").hasClass("living-color-targeting"))
@@ -427,6 +422,7 @@ var LivingColor = {
 		{
 			$("body").addClass("living-color-targeting");
 
+			// Highlight targeted node
 			$(document).on("mouseover.living-color", "*", function(e)
 			{
 				var $target = $(e.target);
@@ -438,6 +434,7 @@ var LivingColor = {
 		}
 	},
 
+	// When targeted node is clicked, create a new rule
 	"targetClick": function(e)
 	{
 		e.preventDefault();
@@ -446,15 +443,19 @@ var LivingColor = {
 		var sel = "";
 		var $target = $(e.target);
 
+		// If we have an id, we just use that
 		if($target.attr("id"))
 		{
 			sel = "#"+$target.attr("id");
 		}
+		
+		// Otherwise, tag and class, wrapped in the closest id we can find: "#myid p.myclass", or "#myid p"
 		else
 		{
 			var classes =
 				$.trim
 				(
+					// Ignore our own custom classes
 					$target[0].className
 						.replace("living-color-targeting", "")
 						.replace("living-color-target", "")
@@ -466,6 +467,7 @@ var LivingColor = {
 			sel += $target[0].tagName.toLowerCase();
 			if(classes.length > 0 && classes[0] != "") sel += "."+classes.join(".");
 			
+			// Try to find the closest parent id, if possible
 			var id = false;
 			var $item = $target;
 			while($item = $item.parent())
@@ -487,10 +489,11 @@ var LivingColor = {
 			if(id) sel = "#"+id+" "+sel;
 		}
 		
+		// Toggle target mode off
 		$("#LivingColor h4 .target").click();
 		
+		// Add a new rule and populate with our new selector
 		$("#LivingColorAdd").click();
-		
 		$("#LivingColor ul li:last-child input:eq(0)").val(sel);
 		
 		return false;
@@ -510,7 +513,8 @@ var LivingColor = {
 		$("#LivingColorFilters input:first").change();
 	},
 	
-	"filterRule": function()
+	// Get the browser prefix for CSS filters (JS version, not CSS version: eg, webkitFilters)
+	"prefixedFilterRule": function()
 	{
 		if(LivingColor.prefix)
 			return LivingColor.prefix+'Filter';
@@ -528,6 +532,7 @@ var LivingColor = {
 
 		$filters.data("link", this);
 	
+		// Top mode: appear just below text box
 		if($("#LivingColor").is(".top"))
 		{
 			top += $a.height() + 3;
@@ -544,6 +549,8 @@ var LivingColor = {
 			}
 			else LivingColor.filtersClose();
 		}
+		
+		// Bottom mode: appear just above text box
 		else
 		{
 			if($filters.is(":hidden") || parseInt($filters.css("top")) != top)
@@ -559,6 +566,7 @@ var LivingColor = {
 			else LivingColor.filtersClose();
 		}
 		
+		// Defaults
 		var filterVals = {
 			"brightness": "100",
 			"contrast": "100",
@@ -571,6 +579,7 @@ var LivingColor = {
 			"blur": "0",
 		};
 		
+		// Populate user-visible text box with CSS value for current filters, for copy/pasta convenience
 		var index = $li.prevAll("li").length;
 		if(LivingColor.rules[index] !== undefined && LivingColor.rules[index]["filters"] !== undefined)
 		{
@@ -590,6 +599,7 @@ var LivingColor = {
 				$("#LivingColorFiltersTextarea").val("");
 		}
 		
+		// Populate controls with current rule values
 		$.each(filterVals, function(key, val)
 		{
 			$("#LivingColorFilters li."+key+" input").val(val);
@@ -650,6 +660,7 @@ var LivingColor = {
 			var val = $li.children("label").children("input[type='number']").val();
 			if(val == $li.data("default")) return true;
 			
+			// Most values are percentages; provide correct units for the exceptions
 			var str = key+"("+val+")";
 			if(key === "blur")
 				str = str.replace(")", "px)");
@@ -711,20 +722,38 @@ var LivingColor = {
 	},
 	
 	// Switch to a new set of rules
-	"colorListChange": function()
+	"colorListChange": function(e)
 	{
+		// Route to special "meta" actions if needed (New/Rename/Delete)
+		var optClass = $("#LivingColorList :selected").attr("class");
+		switch(optClass)
+		{
+			case "new":
+				return LivingColor.saveNewColorList(true);
+			case "copy":
+				return LivingColor.saveNewColorList(false);
+			case "rename":
+				return LivingColor.renameColorList();
+			case "delete":
+				return LivingColor.deleteColorList();
+		}
+	
 		var newActive = $("#LivingColorList").val();
 		if(!newActive) return;
-	
+
+		// Clear out old rules and refresh
 		LivingColor.resetAll();
 		LivingColor.rulesList.active = newActive;
 		LivingColor.loadRules(newActive);
 		LivingColor.render();
 		LivingColor.applyAll();
+
+		// Save the new active default
+		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
 	},
 	
 	// Clone current rules under a new name
-	"saveNewColorList": function()
+	"saveNewColorList": function(reset)
 	{
 		var newName = prompt("Save this color scheme as:");
 		if(!newName) return;
@@ -735,8 +764,55 @@ var LivingColor = {
 		LivingColor.rulesList.active = newName;
 		
 		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
-		localStorage.setItem("LC_colorRules"+newName, JSON.stringify(LivingColor.rules));
+		localStorage.setItem("LC_colorRules"+newName, reset ? "[]" : JSON.stringify(LivingColor.rules));
 
+		LivingColor.render();
+	},
+
+	// Change the name of current color scheme
+	"renameColorList": function()
+	{
+		var newName = prompt('Choose a new name for "'+LivingColor.rulesList.active+'"');
+		if(!newName) return;
+		
+		var index = $.inArray(LivingColor.rulesList.active, LivingColor.rulesList.names);
+		if(index == -1) return;
+		
+		var oldName = LivingColor.rulesList.active;
+		LivingColor.rulesList.names[index] = newName;
+		LivingColor.rulesList.active = newName;
+
+		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
+		localStorage.setItem("LC_colorRules"+newName, JSON.stringify(LivingColor.rules));
+		localStorage.removeItem("LC_colorRules"+oldName);
+
+		LivingColor.render();
+	},
+
+	// Delete color scheme, after confirming
+	"deleteColorList": function()
+	{
+		if(!confirm('Delete "'+LivingColor.rulesList.active+'"?'))
+			return;
+
+		var index = $.inArray(LivingColor.rulesList.active, LivingColor.rulesList.names);
+		if(index == -1) return;
+		
+		// Delete
+		LivingColor.rulesList.names.splice(index, 1);
+
+		localStorage.removeItem("LC_colorRules"+LivingColor.rulesList.active);
+		
+		// Change to previous scheme, creating a blank default if necessary
+		if(LivingColor.rulesList.names.length == 0)
+			LivingColor.rulesList.names = ["Default Scheme"];
+		if(index !== 0)
+			index--;
+		
+		// Save and re-render
+		LivingColor.rulesList.active = LivingColor.rulesList.names[index];
+		localStorage.setItem("LC_colorRules", JSON.stringify(LivingColor.rulesList));
+		
 		LivingColor.render();
 	},
 	
@@ -806,20 +882,20 @@ var LivingColor = {
 		{
 			html += '<option value="'+name+'"'+(activeName == name ? ' selected="selected"' : '')+'>'+name+'</option>';
 		});
-/*
 		html += '<option disabled="disabled"></option>';
-		html += '<option>New Scheme...</option>';
-		html += '<option>Copy "'+activeName+'"...</option>';
-		html += '<option>Rename "'+activeName+'"...</option>';
-		html += '<option>Delete "'+activeName+'"...</option>';
-*/
+		html += '<option class="new">New Scheme...</option>';
+		html += '<option class="copy">Copy "'+activeName+'"...</option>';
+		html += '<option class="rename">Rename "'+activeName+'"...</option>';
+		html += '<option class="delete">Delete "'+activeName+'"...</option>';
 		html += '</select>';
-html += '<input type="button" id="LivingColorListSave" value="Save...">';
+
 		html += '</div></div>';
 		$div.html(html);
 
 		// Render rules
 		html = '';
+		if(LivingColor.rules.length < 1)
+			LivingColor.rules.push({ "selector": "", "color": "", "backgroundColor": "", "filters": [] });
 		if(LivingColor.rules.length > 0) $.each(LivingColor.rules, function(n, rule){
 			html += LivingColor.renderOne(rule);
 		});
@@ -845,7 +921,9 @@ html += '<input type="button" id="LivingColorListSave" value="Save...">';
 };
 
 
-// Evil hack: If these are functions, I can call them before they're declared. EVIL!
+// Inline data URI images
+// (Evil hack: If these are functions, I can call them before they're declared. EVIL!)
+
 function LivingColorFiltersIcon()
 {
 	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAk9JREFUeJzsV0svQ0EUnktD2HlsJCzEa0sR/BAUO7FSXYvHv0CC2ItU0ybe79+B8APQstE2HuE76Wk6xszc3tvqykm+3Jlzz+O7Z55XiH8pTSYZFZFxYA6o5n6n4zgp4BntLtZVs81Y2bMjUQL4Ak7QHcHziPuEI9Ydcz/xB/mdWynhu9TW6W7Ip9SMa8AOmovAHNpZTVITsiI3FIsUg2L5IbDrIaEbdv0UYd4S8Ak4BdaBTeCMdVp7iuU1eT0Q1gSjGb8ANLFdjeTTKnIlf9YQCHNMVwnBIUaTCMgoge7wvo/tptG/ZF27EmOA9IpvhmPSUIRsBCKGMtKX9wINXHp5snVo4gR1leBqRGwEArTONU60EoS0zvN4NRAgWdIQoD0kYCNA0qeUP0lfDoxpAtoItJCvPAyiMIRG6YHhAfApOZ7y1+95JCB4deRtKeYB5TDZTxmW0gYHu/FBYFPj80i5dPaTePlQIQITJp8uLvWH5HDGwcoxBPtQd5vs89KrmYSNwHglJqHbMlTf2QgsawjThLYuQ9NG9MLsG9E+l/Smjajf8bkR0VqPAtdAWnG+x/sg282gf8U6dSsedH5vxWmOGRVF3pbqhPkwouFoZrtayadN5MpuOozqikksi+04TvJQ0DLbAi6UCacS8Hwc04SLWQh4RcwPgVVgW+TOfxoOr1cyKvsCxQBWPBP4zefHTvimSSrrSr+UahjEOfghukP0lBKSbtgpXNXjZU3OMgrMAlXcz/+YpKjNOvoxCbNtRSQkXK5Y/+Im3wAAAP//AwBc83PJij6ChgAAAABJRU5ErkJggg==";
