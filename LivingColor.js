@@ -40,21 +40,24 @@ var LivingColor =
 		"#LivingColor h4 *": "transition: opacity 120ms linear;",
 		"#LivingColor.minimized .wrap": "overflow: hidden;",
 		"#LivingColor.minimized .minimizehide": "opacity: 0;",
-		"#LivingColor ul": "margin: 0; padding: 0; max-height: 290px;",
+		"#LivingColor ul": "margin: 0; padding: 0; max-height: 290px; overflow-x: hidden; overflow-y: auto;",
 		"#LivingColor li": "list-style: none; white-space: nowrap; height: 29px; min-height: 29px;",
 		"#LivingColor li input": "font-size: 12px; padding: 5px; margin: 2px 3px; border: 0; border-radius: 3px; box-shadow: 0 0 5px 0px black inset;",
-		"#LivingColor li .selector": "width: 144px;",
+		"#LivingColor li .selector": "width: 124px;",
+		"#LivingColor .overflown .selector": "width: 104px;",
 		"#LivingColor li .color": "width: 48px; text-align: center; ",
 		"#LivingColor .controls": "margin-top: 5px; white-space: nowrap;",
-		"#LivingColor .controls > *": "margin: 0 5px;",
-		"#LivingColor .controls input": "",
-		"#LivingColor .controls select": "",
+		"#LivingColor .controls select": "margin: 0 5px;",
+		"#LivingColor .controls input": "margin: 1px 5px 0;",
 		"#LivingColorAdd": "float: right;",
 
-		"#LivingColor li a.filters": "display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; cursor: pointer; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; background-image: url('"+LivingColorFiltersIcon()+"'); opacity: 0.5; ",
+		"#LivingColor li a.icon": "cursor: pointer; display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; opacity: 0.6; ",
+		"#LivingColor li a.remove": "background-image: url('"+LivingColorRemoveIcon()+"'); filter: grayscale(100%); margin-left: 4px;",
+		"#LivingColor li a.filters": "background-image: url('"+LivingColorFiltersIcon()+"'); filter: brightness(10%) grayscale(100%); ",
 
-		"#LivingColor li a.filters:hover": "opacity: 1.0;",
-		"#LivingColor li a.filters.active": "opacity: 1.0;",
+		"#LivingColor li a:hover": "opacity: 1.0;",
+		"#LivingColor li a.active": "opacity: 0.8; filter: hue-rotate(180deg) grayscale(30%);",
+		"#LivingColor li a.active:hover": "opacity: 1.0; filter: hue-rotate(180deg) grayscale(30%);",
 
 		"#LivingColorFilters": "z-index: 10000; position: fixed; right: 5px; display:none;"
 			+"background: threedface; border-color: threedhighlight threedshadow threedshadow threedhighlight;"
@@ -92,6 +95,7 @@ var LivingColor =
 			.on("change", "#LivingColorList", LivingColor.colorListChange)
 			.on("click", "#LivingColorListSave", LivingColor.saveNewColorList)
 			.on("click", ".living-color-target", LivingColor.targetClick)
+			.on("click", "#LivingColor .remove", LivingColor.removeRow)
 			.on("click", "#LivingColor .filters", LivingColor.clickFilters)
 			.on("click", "#LivingColorFiltersReset", LivingColor.filtersReset)
 			.on("change mousemove", "#LivingColorFilters input[type='range']", LivingColor.sliderChange)
@@ -125,13 +129,23 @@ var LivingColor =
 			var css = "";
 			$.each(this.styles, function(sel, val)
 			{
-				css += sel+" { "+val+" } ";
-				if($.inArray(sel, ["filters", "transform", "transition", "user-select"]) != -1)
+				var vals = val.split(";");
+				$.each(vals, function(n, v)
 				{
-					css +=     "-ms-"+sel+" { "+val+" } ";
-					css +=    "-moz-"+sel+" { "+val+" } ";
-					css += "-webkit-"+sel+" { "+val+" } ";
-				}
+					var cssKeyVal = v.split(":");
+					if(cssKeyVal.length != 2) return true;
+					
+					var cssKey = $.trim(cssKeyVal[0]);
+					var cssVal = $.trim(cssKeyVal[1]);
+					
+					if($.inArray(cssKey, ["filter", "transform", "transition", "user-select"]) != -1)
+					{
+						val +=     "-ms-"+cssKey+": "+cssVal+";";
+						val +=    "-moz-"+cssKey+": "+cssVal+";";
+						val += "-webkit-"+cssKey+": "+cssVal+";";
+					}
+				});
+				css += sel+" { "+val+" } ";
 			});
 			$style[0].appendChild(document.createTextNode(css));
 			this['$style'] = $style;
@@ -313,7 +327,9 @@ var LivingColor =
 	
 		LivingColor.rules.push(newRule);
 		
-		$("#LivingColor ul").append(LivingColor.renderOne(newRule));
+		$("#LivingColor ul")
+			.toggleClass("overflown", LivingColor.rules.length > 10)
+			.append(LivingColor.renderOne(newRule));
 		
 		jscolor.bind();
 	},
@@ -497,6 +513,24 @@ var LivingColor =
 		$("#LivingColor ul li:last-child input:eq(0)").val(sel);
 		
 		return false;
+	},
+
+	// Remove a row
+	"removeRow": function(e)
+	{
+		// Fetch row to delete and remove
+		var $li = $(e.target).parent("li");
+		var index = $li.prevAll("li").length;
+
+		// Confirm, maybe
+		if($li.children(".selector").val() && !confirm('Delete this item?'))
+			return;
+		
+		LivingColor.rules.splice(index, 1);
+		
+		// Display and save
+		LivingColor.render();
+		localStorage.setItem("LC_colorRules"+LivingColor.rulesList.active, JSON.stringify(LivingColor.rules));
 	},
 	
 	// Revert filters to defaults
@@ -858,7 +892,7 @@ var LivingColor =
 	"render": function()
 	{
 		var $div = $("#LivingColor");
-		
+		 
 		if($div.length < 1)
 		{
 			$("body").append('<div id="LivingColor" class="LivingColorImmune"></div>');
@@ -899,7 +933,13 @@ var LivingColor =
 		if(LivingColor.rules.length > 0) $.each(LivingColor.rules, function(n, rule){
 			html += LivingColor.renderOne(rule);
 		});
-		$div.children(".wrap").children("ul").html(html);
+
+		$div
+			.children(".wrap")
+			.children("ul")
+			.toggleClass("overflown", LivingColor.rules.length > 10)
+			.html(html)
+			;
 
 		// Attach color picker
 		jscolor.bind();
@@ -915,7 +955,8 @@ var LivingColor =
 		+	'<input type="text" name="selector" class="selector" value="'+rule.selector+'" placeholder="Selector (#id .class)" />'
 		+	'<input type="text" name="color" class="textColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.color+'" placeholder="Text" />'
 		+	'<input type="text" name="backgroundColor" class="backgroundColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.backgroundColor+'" placeholder="BG" />'
-		+	'<a class="filters'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="'+rule.filters.join(" ")+'"></a>'
+		+	'<a class="filters icon'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="'+rule.filters.join(" ")+'"></a>'
+		+	'<a class="remove icon" title="Remove"></a>'
 		+	'</li>';
 	}
 };
@@ -924,9 +965,13 @@ var LivingColor =
 // Inline data URI images
 // (Evil hack: If these are functions, I can call them before they're declared. EVIL!)
 
+function LivingColorRemoveIcon()
+{
+	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAXVBMVEUAAAA/IlQ/IVM/IlRAIlQ/IlQ/IlQ+IlQ/IlQ/IlM/IlM/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IVM/IlQ/IVQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlM/IlQ/IlQ/IlRMHdouAAAAH3RSTlMA/k/ujkX6i+eCXFY29uu3csGgTEgg9N+uqZhj0MMqu7jceAAAAGxJREFUGNOtz8kOgCAMRVEqoziAghOo//+ZNoAJ7r15q7NoUpKzatOkdFsmgwLYmGR2QZigakYYadWJ4JoqTjAv2ZtLV1sIu5gPHMgMoteKd9Q3Xxj5zxCV19R1BaIwF5gJJ2yCZV+H1Grw2QcYmQaccSLtigAAAABJRU5ErkJggg==";
+}
 function LivingColorFiltersIcon()
 {
-	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAk9JREFUeJzsV0svQ0EUnktD2HlsJCzEa0sR/BAUO7FSXYvHv0CC2ItU0ybe79+B8APQstE2HuE76Wk6xszc3tvqykm+3Jlzz+O7Z55XiH8pTSYZFZFxYA6o5n6n4zgp4BntLtZVs81Y2bMjUQL4Ak7QHcHziPuEI9Ydcz/xB/mdWynhu9TW6W7Ip9SMa8AOmovAHNpZTVITsiI3FIsUg2L5IbDrIaEbdv0UYd4S8Ak4BdaBTeCMdVp7iuU1eT0Q1gSjGb8ANLFdjeTTKnIlf9YQCHNMVwnBIUaTCMgoge7wvo/tptG/ZF27EmOA9IpvhmPSUIRsBCKGMtKX9wINXHp5snVo4gR1leBqRGwEArTONU60EoS0zvN4NRAgWdIQoD0kYCNA0qeUP0lfDoxpAtoItJCvPAyiMIRG6YHhAfApOZ7y1+95JCB4deRtKeYB5TDZTxmW0gYHu/FBYFPj80i5dPaTePlQIQITJp8uLvWH5HDGwcoxBPtQd5vs89KrmYSNwHglJqHbMlTf2QgsawjThLYuQ9NG9MLsG9E+l/Smjajf8bkR0VqPAtdAWnG+x/sg282gf8U6dSsedH5vxWmOGRVF3pbqhPkwouFoZrtayadN5MpuOozqikksi+04TvJQ0DLbAi6UCacS8Hwc04SLWQh4RcwPgVVgW+TOfxoOr1cyKvsCxQBWPBP4zefHTvimSSrrSr+UahjEOfghukP0lBKSbtgpXNXjZU3OMgrMAlXcz/+YpKjNOvoxCbNtRSQkXK5Y/+Im3wAAAP//AwBc83PJij6ChgAAAABJRU5ErkJggg==";
+	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAADkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQFQdYNSAAAAHXRSTlMAu1j23O0ktnmt7zEFmmsU+PuolG1sOCENfDUmY8QXtcAAAADvSURBVDjLrVNZFoMgDAyUTUHsZt2a+1+zgFp4aqUf5oMHk4FsA5xulB74GgOClwJMs88qkLwkonRLsUtgiDfEsLCN83FXzRW/dm3U/bF6fm2rMGoCOakqwqe9Sv2d9VCpajAArSr9yXaxvoJdHMI0vAlrHTAwd7ywYqn2ieG+rolLT3hElwF6zgRDppjS3xMB6j1CDMymXQReU4yEmrutXvyj9HSQCQH8o3Kccwx1VcBSQhWqpv8RQMjbQYh8krFMsinzZ6OG2KhMq/eH1cdh5cedF0yUnE0lZ6PksqJNw8hj2VMLIDgXYCzNfL1z7QNo2CP3M6GClQAAAABJRU5ErkJggg==";
 }
 function LivingColorImageHV()
 {
