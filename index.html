@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Living Color</title>
+	<meta name="description" content="You can hue what you want to hue">
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="favicon.ico">
+	<link href="assets/main.css" type="text/css" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow:400,700" rel="stylesheet" type="text/css">
+	<link href="assets/prettify.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" src="assets/prettify.js"></script>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<!--
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js"></script>
+	-->
+	<script type="text/javascript" src="LivingColor.js"></script>
+	<script type="text/javascript">
+		$(function()
+		{
+			prettyPrint();
+			
+			LivingColor.start({
+				"minimized": true,
+				"defaultScheme": [
+					{ "selector": "body",			"color": "4D2201", "backgroundColor": "FFD4B8", "filters": [] },
+					{ "selector": "h1",				"color": "ED5118", "backgroundColor":       "", "filters": [] },
+					{ "selector": "h1 span",		"color": "322F87", "backgroundColor":       "", "filters": [] },
+					{ "selector": "#demo_image",	"color":       "", "backgroundColor":       "",
+															"filters": ["saturate(150%)"] }
+				]
+			});
+
+			$("#try").on("click", function()
+			{
+				if($("#LivingColor").is(".minimized"))
+					$("#LivingColor h4 a.minimize").click();
+				
+				$("#LivingColor .wrap input:eq(0)").focus();
+			});
+		});
+	</script>
+
+</head>
+<body>
+	
+<a id="ribbon" href="http://github.com/lukifer/LivingColor"></a>
+
+<div id="container">
+
+	<div class="row">
+		<div class="column grid_12">
+
+			<div id="logo">
+				<h1>Living <span>Color</span></h1>
+				<h3>Experiment on the colors of your website, with real-time feedback</h3>
+			</div> <!-- #logo -->
+
+		</div>
+	</div>
+
+
+
+	<div class="row">
+		
+		<div class="column grid_5">
+
+			<ul id="Fs-n-Bs">
+				<li>Choose page elements using <a href="#">CSS selectors</a>, or the handy targeting tool (<span class="target_icon"></span>).</li>
+				<li>Play with text color and background color, seeing your changes as they're applied.</li>
+				<li>Click the filter icon (<span class="filters_icon"></span>) to change brightness, contrast, saturation, blur, and more.</li>
+				<li>Save color schemes to compare.</li>
+				<li>Compatible with modern desktop browsers</li>
+				<li><a href="http://opensource.org/licenses/MIT">MIT Licensed</a></li>
+				<!-- <li><a id="try" href="javascript:void(0);">Try it now!</a></li> -->
+			</ul>
+
+			<div id="downloads">
+
+				<a id="try" href="javascript:void(0);" class="button">
+					<label>Try It Now!</label>
+				</a>
+
+				<a id="download_js" href="LivingColor.js" download="LivingColor.js" class="button">
+					<span>&#11015;</span>
+					<label>Download (Javascript)</label>
+					<img src="assets/js.png" />
+				</a>
+
+				<a id="download_chrome" href="javascript:void(0);" class="button" disabled="disabled">
+					<span>&#8853;</span>
+					<!-- <span>&#43;</span> -->
+					<label>Install (Chrome)</label>
+					<label class="subtext">Coming Soon!</label>
+					<img src="assets/chrome.png" />
+					<!-- <label class="subsubtext">Passive aggressive comments hiding in source code</label> -->
+				</a>
+
+
+			</div>
+
+		</div>
+		<!-- .grid_5 -->
+
+		<div class="column grid_7">
+			
+			<div id="demo_frame">
+				<img id="demo_image" src="assets/spacehawking.jpg" alt="Lego Stephen Hawking In Space" />
+			</div>
+			
+			<h5 id="demo_subtitle">Whatever you do, don't make Profressor Hawking sepia.<br>You wouldn't like him when he's sepia.</h5>
+			<!-- <h5 id="demo_subtitle">Click the filter icon (<span class="filters_icon"></span>) to change contrast, saturation and more!</h5> -->
+		
+		</div>
+		<!-- .grid_7 -->
+			
+	</div>
+	
+	
+	<div class="row">
+
+		<div class="column grid_12">
+			<a name="usage"></a>
+			<h2>Usage</h2>
+		</div>
+
+		<div class="column grid_6">
+<pre class="prettyprint">&lt;!-- HTML --&gt;
+&lt;script src="LivingColor.js"&gt;&lt;/script&gt;
+</pre>
+		</div>
+
+		<div class="column grid_6">
+<pre class="prettyprint">// Javascript
+$(function() { LivingColor.start(); }
+</pre>
+		</div>
+
+	</div>
+	
+
+
+
+	<div id="faq" class="row">
+		<div class="column grid_12">
+			<h2>Fastidiously Asked Questions</h2>
+		</div>
+		
+		<div class="column grid_4">
+			<p><b>Q: Why don't you have any questions yet?</b></p>
+			<p>A: I am Jack's superfluous paradox.</p>
+		</div>
+
+		<div class="column grid_4">
+		</div>
+		
+		<div class="column grid_4">
+		</div>
+	</div>
+
+
+	
+	<div class="row">
+		<div class="column grid_6">
+			<h2>Version History</h2>
+			<h3>v1.0</h3>
+			<ul>
+				<li>Colors and backgrounds and filters, oh my!</li>
+				<li>Docmentation and example</li>
+			</ul>
+		</div>
+		<div class="column grid_6">
+			<h2>Known Bugs</h2>
+			<ul>
+				<li>Inline styles of targeted elements will be overwritten. (Don't use inline styles, kids.)</li>
+				<li>Page styling can sometimes over-ride Living Color's own styling and make it look goofy.</li>
+				<li>Setting a <code>transform</code> value on <code>&lt;body&gt;</code> screws up window positioning. If possible, set the transform on a wrapper div instead.</li>
+			</ul>
+		</div>
+	</div>
+	
+</div>	
+
+
+<div id="footer">
+
+	<div class="shadow"></div>
+
+	<div class="row">
+		<div class="column grid_12">
+			<a class="me" href="http://lukifer.net/"><img width="60" height="60" border="0" alt="Lukifer"
+				src="http://www.gravatar.com/avatar/ce1509ecb78ccb5f2b4f002eda3afb12.png"></a>
+
+			<div class="tagline tagline_left">
+				<p>Brought to you by <a href="http://lukifer.net/">Lukifer</a></p>
+				<p>Follow on <a href="http://twitter.com/lkfr" alt="@lkfr">Twitter</a> or <a href="https://github.com/lukifer" alt="@lukifer">GitHub</a></p>
+			</div>
+
+			<div class="tagline tagline_right">
+				<p>Report bugs via the <a href="https://github.com/lukifer/HoverForMore.js/issues">Issue Tracker</a></p>
+				<p>Donations welcomed via <a href="https://www.gittip.com/lukifer/">GitTip</a> or <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=lukifer@mail.com&item_name=HoverForMore&currency_code=USD">PayPal</a></p>
+			</div>
+
+			<a class="github" href="http://github.com"><img src="assets/github.png" width="130" height="60" alt="GitHub: Social Coding" /></a>
+		</div>
+
+	</div>
+
+</div>
+	
+
+	
+
+</body>
+</html>

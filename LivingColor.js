@@ -5,7 +5,11 @@
 // License: http://opensource.org/licenses/mit-license.php
 
 
-var LivingColor =
+(function(){
+
+$ = jQuery || Zepto;
+
+window.LivingColor =
 {
 	"rules": [],
 	"rulesList": [],
@@ -28,14 +32,19 @@ var LivingColor =
 		"#LivingColor h4 a:hover": "cursor: pointer; opacity: 0.8;",
 		"#LivingColor h4 a::after": "content: ''; position: absolute; display: block;",
 		"#LivingColor h4 .target": "top: 3px; height: 14px; left: 5px; width: 14px; color: #ddd; overflow: hidden;",
+	//	"#LivingColor h4 .target": "top: 2px; height: 15px; left: 4px; width: 15px; color: #ddd; overflow: hidden;",
 		"#LivingColor h4 .target span": "font-size: 32px; position: relative; top: -19px; left: -2px;",
+	//	"#LivingColor h4 .target span": "font-size: 32px; position: relative; top: -1px; left: -2px;",
+	//	"#LivingColor h4 .target span": "display: inline-block; width: 15px; height: 15px;"
+	//		+"background-image: url('"+LivingColorTargetIcon()+"'); background-repeat: no-repeat;"
+	//		+"filter: brightness(200%);",
 		".living-color-targeting #LivingColor h4 .target": "color: orange; opacity: 1.0;",
 		"#LivingColor h4 .move": "top: 0; height: 20px; right: 25px; width: 22px;",
 		"#LivingColor h4 .move::after": "bottom: 4px; left: 5px; height: 0; width: 0; border-style: solid; border-width: 0 5px 10px 5px; border-color: transparent transparent #ddd transparent;",
 		"#LivingColor.top h4 .move::after": "border-width: 10px 5px 0 5px; border-color: #ddd transparent transparent transparent;",
 		"#LivingColor h4 .minimize": "right: 3px; top: 0; width: 22px; height: 20px;",
 		"#LivingColor h4 .minimize::after": "right: 5px; bottom: 4px; height: 3px; width: 12px; background: #ddd; border-radius: 1px;",
-		"#LivingColor .wrap": "padding: 8px; margin: 0; transition: width 250ms linear;",
+		"#LivingColor .wrap": "padding: 8px 7px; margin: 0; transition: width 250ms linear;",
 		"#LivingColor.minimized": "width: 27px; max-height: 20px; ",
 		"#LivingColor h4 *": "transition: opacity 120ms linear;",
 		"#LivingColor.minimized .wrap": "overflow: hidden;",
@@ -47,8 +56,10 @@ var LivingColor =
 		"#LivingColor .overflown .selector": "width: 104px;",
 		"#LivingColor li .color": "width: 48px; text-align: center; ",
 		"#LivingColor .controls": "margin-top: 5px; white-space: nowrap;",
-		"#LivingColor .controls select": "margin: 0 5px;",
-		"#LivingColor .controls input": "margin: 1px 5px 0;",
+		"#LivingColor .controls select": "margin: 0 3px;",
+		"#LivingColor .controls input": "margin: 1px 2px 0;"
+			+"padding: 0 8px; background-color: rgb(192,192,192); color: rgb(0,0,0);"
+			+"border-radius: 0; font-size: 11px; font-family: auto; box-shadow: none;",
 		"#LivingColorAdd": "float: right;",
 
 		"#LivingColor li a.icon": "cursor: pointer; display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; opacity: 0.6; ",
@@ -111,6 +122,8 @@ var LivingColor =
 	"start": function(opts)
 	{
 		LivingColor.options = $.extend({
+			"minimized": false,
+			"defaultScheme": false
 		}, opts);
 		
 		// Figure out which prefix we'll need
@@ -138,7 +151,7 @@ var LivingColor =
 					var cssKey = $.trim(cssKeyVal[0]);
 					var cssVal = $.trim(cssKeyVal[1]);
 					
-					if($.inArray(cssKey, ["filter", "transform", "transition", "user-select"]) != -1)
+					if($.inArray(cssKey, ["filter", "transform", "transition", "user-select", "appearance"]) != -1)
 					{
 						val +=     "-ms-"+cssKey+": "+cssVal+";";
 						val +=    "-moz-"+cssKey+": "+cssVal+";";
@@ -357,14 +370,20 @@ var LivingColor =
 			{
 				var prefixedFilterRule = LivingColor.prefixedFilterRule();
 
-				$(last)
-					.css("color", "")
-					.css("backgroundColor", "")
-					.each(function(n, el)
+				$(last).each(function(n, el)
+				{
+					var $el = $(el);
+					if($el.is(".LivingColorImmune") == false && $el.parents(".LivingColorImmune").length === 0)
 					{
-						el.style[prefixedFilterRule] = '';
-					})
-					;
+						$el
+							.css("color", "")
+							.css("backgroundColor", "")
+							;
+						
+						if(rule.filters && rule.filters.length)
+							$el[0].style[prefixedFilterRule] = "";
+					}
+				});
 			}
 			
 			// Cache the selector for use next time
@@ -387,7 +406,17 @@ var LivingColor =
 	// Minimized state toggle
 	"minimize": function(e)
 	{
-		$("#LivingColor").toggleClass("minimized");
+		var $div = $("#LivingColor");
+		if($div.hasClass("minimized"))
+		{
+			$div.removeClass("minimized");
+			$div.find("h4 a.minimize").attr("title", "Minimize");
+		}
+		else
+		{
+			$div.addClass("minimized");
+			$div.find("h4 a.minimize").attr("title", "Un-minimize");
+		}
 	},
 
 	// Move to and from top/bottom position
@@ -402,6 +431,7 @@ var LivingColor =
 			$LivingColor.one(transitionEnd, function()
 			{
 				$LivingColor.removeClass("top");
+				$LivingColor.find("h4 a.move").attr("title", "Move to the top");
 				$LivingColor.css("top", "");
 			});
 			$LivingColor.css("top", (window.innerHeight - $LivingColor.height() - 10)+"px");
@@ -413,6 +443,7 @@ var LivingColor =
 			$LivingColor.one(transitionEnd, function()
 			{
 				$LivingColor.addClass("top");
+				$LivingColor.find("h4 a.move").attr("title", "Move to the bottom");
 				$LivingColor.css("bottom", "");
 			});
 			$LivingColor.css("bottom", (window.innerHeight - $LivingColor.height() - 10)+"px");
@@ -839,7 +870,11 @@ var LivingColor =
 		
 		// Change to previous scheme, creating a blank default if necessary
 		if(LivingColor.rulesList.names.length == 0)
+		{
 			LivingColor.rulesList.names = ["Default Scheme"];
+			if(typeof LivingColor.options.defaultScheme === "object" && LivingColor.options.defaultScheme.length)
+			LivingColor.rules = LivingColor.options.defaultScheme;
+		}
 		if(index !== 0)
 			index--;
 		
@@ -898,14 +933,22 @@ var LivingColor =
 			$("body").append('<div id="LivingColor" class="LivingColorImmune"></div>');
 			$div = $("#LivingColor");
 			
-			if(typeof LivingColor.rulesList === "object" && LivingColor.rulesList.top)
-				$div.addClass("top");
+			if(LivingColor.options.minimized)
+				$div.addClass("minimized");
 		}
+
+		if(typeof LivingColor.rulesList !== "object")
+			LivingColor.rulesList = {};
+		if(LivingColor.rulesList.top)
+			$div.addClass("top");
 		
 		// Render add button
-		var html = '<h4><a class="target minimizehide"><span>&#8982;</span></a>'
+		var html = '<h4><a class="target minimizehide" title="Target an element to style"><span>&#8982;</span></a>'
+		//var html = '<h4><a class="target minimizehide"><span></span></a>'
 			+'<span class="minimizehide">Living Color</span>'
-			+'<a class="move minimizehide"></a><a class="minimize"></a></h4>'
+			+'<a class="move minimizehide" title="Move to the '
+				+(LivingColor.rulesList.top?"bottom":"top")+'"></a>'
+			+'<a class="minimize" title="Minimize"></a></h4>'
 			+'<div class="wrap"><ul></ul>'
 			+'<div class="controls"><input type="button" id="LivingColorAdd" value="Add Rule" />';
 
@@ -955,12 +998,13 @@ var LivingColor =
 		+	'<input type="text" name="selector" class="selector" value="'+rule.selector+'" placeholder="Selector (#id .class)" />'
 		+	'<input type="text" name="color" class="textColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.color+'" placeholder="Text" />'
 		+	'<input type="text" name="backgroundColor" class="backgroundColor color {required:false,onImmediateChange:\'LivingColor.liveColorChange(this.valueElement)\'}" value="'+rule.backgroundColor+'" placeholder="BG" />'
-		+	'<a class="filters icon'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="'+rule.filters.join(" ")+'"></a>'
+		+	'<a class="filters icon'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="Image filters: '+(rule.filters.length ? rule.filters.join(" ") : "None")+'"></a>'
 		+	'<a class="remove icon" title="Remove"></a>'
 		+	'</li>';
 	}
 };
 
+})();
 
 // Inline data URI images
 // (Evil hack: If these are functions, I can call them before they're declared. EVIL!)
@@ -969,8 +1013,14 @@ function LivingColorRemoveIcon()
 {
 	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAXVBMVEUAAAA/IlQ/IVM/IlRAIlQ/IlQ/IlQ+IlQ/IlQ/IlM/IlM/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlQ/IVM/IlQ/IVQ/IlQ/IlQ/IlQ/IlQ/IlQ/IlM/IlQ/IlQ/IlRMHdouAAAAH3RSTlMA/k/ujkX6i+eCXFY29uu3csGgTEgg9N+uqZhj0MMqu7jceAAAAGxJREFUGNOtz8kOgCAMRVEqoziAghOo//+ZNoAJ7r15q7NoUpKzatOkdFsmgwLYmGR2QZigakYYadWJ4JoqTjAv2ZtLV1sIu5gPHMgMoteKd9Q3Xxj5zxCV19R1BaIwF5gJJ2yCZV+H1Grw2QcYmQaccSLtigAAAABJRU5ErkJggg==";
 }
+function LivingColorTargetIcon()
+{
+	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPBAMAAADJ+Ih5AAAAJFBMVEUAAAC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLR/RU6UAAAAC3RSTlMAP7Hff08fn18vb8OOC9cAAABVSURBVAjXYwCC2QkMECAtAKGdd292ANHsm6KDtoMY3g3cDN0gISMGbgYmAwaGxK1ABuvGBIbdu3dvAuINDBO3CEoLigBFoGpguhbAzIGZvADJLrjtALcpGetQDVhaAAAAAElFTkSuQmCC";
+	//return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAZlBMVEUAAAAYGBgbGxskJCQPDw8UFBQaGhoqKiogICATExMJCQknJycNDQ0qKiokJCQWFhYMDAwMDAwkJCQODg4oKCguLi4FBQUaGhoaGhoGBgYdHR0QEBArKysnJyckJCQWFhYMDAwvLy84KBAfAAAAGHRSTlMAPx+vr08v39/f35+ff39/f29fX08/P79cCSLoAAAAfUlEQVQI102PVw7DIBBEBwPuLW4Jpvr+l8wKsMSTZlZP87VI1E+FkvM5C5saY0wzvTpYftiD2yHp7DbAAZubo7ec6qbwlqpit8wub1bhl/jmi5r5hTHmKYunHegElaaIDiBWvUff9QeRMQgZpAgjMmuvlOrjmrnUhZJa5f/+QNkG43HCTRYAAAAASUVORK5CYII=";
+}
 function LivingColorFiltersIcon()
 {
+//	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAMBJREFUeJxikJGRYcCCNYG4CIgvA/ENIC4DYi1satEFVIB4IRC/A+L/QPwPiC8A8QMg/gDEy4BYFZcBtkB8H6oRhn8AsTEQiwBxCBCfB+KnULUoBoBMfYimGWaAIZIlfEC8GoifwVwCEmQE4sVYNMMMMELzJsiQi0C8AqQXFmAfSTAAhAOB+BNIL4hTiEMzPgOEgfgRKHYYoFFFqgEgbx8C4ttUMYBiL1AciBRHI8UJiSpJmSqZiazsDAAAAP//AwDzSs49QqCirAAAAABJRU5ErkJggg==";
 	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAADkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQHkUQFQdYNSAAAAHXRSTlMAu1j23O0ktnmt7zEFmmsU+PuolG1sOCENfDUmY8QXtcAAAADvSURBVDjLrVNZFoMgDAyUTUHsZt2a+1+zgFp4aqUf5oMHk4FsA5xulB74GgOClwJMs88qkLwkonRLsUtgiDfEsLCN83FXzRW/dm3U/bF6fm2rMGoCOakqwqe9Sv2d9VCpajAArSr9yXaxvoJdHMI0vAlrHTAwd7ywYqn2ieG+rolLT3hElwF6zgRDppjS3xMB6j1CDMymXQReU4yEmrutXvyj9HSQCQH8o3Kccwx1VcBSQhWqpv8RQMjbQYh8krFMsinzZ6OG2KhMq/eH1cdh5cedF0yUnE0lZ6PksqJNw8hj2VMLIDgXYCzNfL1z7QNo2CP3M6GClQAAAABJRU5ErkJggg==";
 }
 function LivingColorImageHV()
@@ -984,6 +1034,7 @@ function LivingColorImageHS()
 function LivingColorImageBG()
 {
 	return "data:image/jpeg;base64,/9j/4Qw8aHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/Pgo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA1LjEuMiI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaDwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICAgICAgICAgIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIj4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDoyMjNCQ0QyMzZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwveG1wTU06SW5zdGFuY2VJRD4KICAgICAgICAgPHhtcE1NOkRvY3VtZW50SUQ+eG1wLmRpZDoyMjNCQ0QyNDZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwveG1wTU06RG9jdW1lbnRJRD4KICAgICAgICAgPHhtcE1NOkRlcml2ZWRGcm9tIHJkZjpwYXJzZVR5cGU9IlJlc291cmNlIj4KICAgICAgICAgICAgPHN0UmVmOmluc3RhbmNlSUQ+eG1wLmlpZDoyMjNCQ0QyMTZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwvc3RSZWY6aW5zdGFuY2VJRD4KICAgICAgICAgICAgPHN0UmVmOmRvY3VtZW50SUQ+eG1wLmRpZDoyMjNCQ0QyMjZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwvc3RSZWY6ZG9jdW1lbnRJRD4KICAgICAgICAgPC94bXBNTTpEZXJpdmVkRnJvbT4KICAgICAgPC9yZGY6RGVzY3JpcHRpb24+CiAgIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/Pv/bAEMAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhANDhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFP/bAEMBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIAGQAZAMBIQACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APpAIuMAMPotLt2jj8cqP8K1OchKbySQMD2p6KpHAz9GoAQrgjCt+PNLhcg/d/LNMY8MvQM2aQxqxxnP1U0gG+SyHCsPyxSjzR1Jx9aAF2ueT8w9TTSn94ZPtQIcEGOhP/AaKAG+aGwAST6YxRjJ+6c+ppgKJCp9B9KMnHPz0AIH7YH5U5PK/uj65oGKxXtz+NNChj94D8RSEPCjHRj7inMcKCAwPvTGMxuOQxJ9qbgL3GP96gQGfBwCn5Z/pRSGVxMpyQgP40CUk/dA/wCBUxDZHGR/U1G0yoPf60AOFwc5wQPw/wAaebgOOo/PFAxROyHAdT7Z/wDrUhuST2H40CFEzHnrSm72gEijcYz7WDzu59zSG63D7x+gpCFS5UL3P1//AFUUwM03DMORn6gU9EGNxOO+MUwHiZUyBuBphueeGA/z70WABc56spHtSeeucgg+vH/1qAE8xXPUjHbApBMCTyD9RTAPtDBvlGPxpfPOc7wB6c0gEkl3YO5R+PWnC4TA5OfUGgBpuTngN+Q/wopgQKwzhnAPsKQ43cZP1yaQDSW3Ywox/smhgqjJ+96ZIoANwxwGz7HIoVSedpA9TimA8Ryscg8fShlkXPygn2FADRvwOpFSAgHkY9cCgBCUDcKDn1oBKk4OPouaAGjzDnEn5rRSAmKMy8Y+tMKkqR8p+hoAFUgYEZHvSjcB2U/Si4Cbgp5bZn2oDOThGDfUCmA8wSEcqM0ihk/5Zrn1oANmegOfTrSFM9UGfQigAC8ensKeF2gcmgBdpPIYj/P1ooAeAqjHyt7bqTCAHEa/jzQA8YOPl/Q0u5V4IA/OkA1+ACp+U+qGkBUfxE/pTAWNkbPpjvmnkI3RefxoAjx67gPrScdzwPegBzYAB5pvAUenrmkA1o0zzj86KYCmUtna4I9KQSFzycn2yKAJSSy4JA98VHuEfqw+lIBwlWTgrjjrSlVIwOD+FACFdgAAYjv8woPI6HH1/wDrUAOjVW6cfXk09sNkZXj1FAEeVTjI/wCAmjzNv8QHvmgBrTpnlwf+BUUWAiQAdWxn1NTYbA4H1z/9amAwszZBVjURBH98H25/pQAsQfOSxX6jrTiQh++B+dIA80MMGQke1GI2T7rfiaYAAo4OV9xzTiVXgOT9aAE3N2K49zStG44yGFADCnsPzP8AjRSAVdoPJ/TpT9wZcDdTAb5TbiMnP1NLsZQc4J+tIBBCw/hAHruxUckZB+baB9TTAVC3RWB+q5p4LEfNk+4AoAUsVYAcj3NJ17L196QCsmOVHFMyy8ZOPQUwADdyeD9BRSsBa8odTGpA9jTHQHsQaAHpEmMEYx2LU7ywD8obH0z/AFoAQggY2H6mozDubqnXpimA5oipHK/QD/69N2ndnKH2C1NwHFd/GASPao/KyeePwpgSCLYOWY5/2cUqxJ1+b/vmgBTCp6qD9R/9eiiwFlIMcNjj/YpGhQt0P/fNIBrRojcAkjttoEZxkEL+dAB5TAgkq3HYn/CpRCf7pagBPIIGDjH+1TFhCkggH8aAFKOp4Cgf59qCDg/OM+2OaAGiE/WneQR1B/DmgBotWPQsP+AZooHcfI2GXgfjSjAAwAM9aAJI0DNznpT2X5upA9M0CI9w3kbRUhbBIx0GaQ0RGVsE8CkR2k6n8gKYiQxgEDrTzEGKrkgH0NIYvkqCVxwBStEq8AfpTEROoVsYz9aKQH//2Q==";
+	//return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAQMAAABIeJ9nAAAABlBMVEX///8AAABVwtN+AAAADElEQVQI12NoYHAAAAHEAMFJRSpJAAAAAElFTkSuQmCC';
 }
 
 

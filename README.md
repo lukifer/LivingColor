@@ -1,9 +1,9 @@
 LivingColor
 ===========
 
-Alter your web page colors in real time!
+Alter your web page colors in real time! See the demo page: http://lukifer.github.io/LivingColor/
 
-Requires JSColor (bundled) and jQuery or Zepto (not bundled).
+Requires JSColor (bundled) and jQuery or Zepto (not bundled). Chrome extension coming soon!
 
 Usage:
 ------
