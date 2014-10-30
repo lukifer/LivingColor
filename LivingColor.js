@@ -119,6 +119,7 @@ window.LivingColor =
 		//	.on("dragend", "#LivingColor", function(e){e.stopPropagation();})
 	},
 
+	// Nothing happens until this function is called
 	"start": function(opts)
 	{
 		LivingColor.options = $.extend({
@@ -198,6 +199,12 @@ window.LivingColor =
 		{
 			theRulesList = {"names": ["Default Scheme"], "active": "Default Scheme"};
 			localStorage.setItem("LC_colorRules", JSON.stringify(theRulesList));
+
+			if(typeof LivingColor.options.defaultScheme === "object" && LivingColor.options.defaultScheme.length)
+			{
+				LivingColor.rules = LivingColor.options.defaultScheme;
+				localStorage.setItem("LC_colorRulesDefault Scheme", JSON.stringify(LivingColor.rules));
+			}
 		}
 		
 		LivingColor.rulesList = theRulesList;
@@ -870,11 +877,7 @@ window.LivingColor =
 		
 		// Change to previous scheme, creating a blank default if necessary
 		if(LivingColor.rulesList.names.length == 0)
-		{
 			LivingColor.rulesList.names = ["Default Scheme"];
-			if(typeof LivingColor.options.defaultScheme === "object" && LivingColor.options.defaultScheme.length)
-			LivingColor.rules = LivingColor.options.defaultScheme;
-		}
 		if(index !== 0)
 			index--;
 		
@@ -939,7 +942,7 @@ window.LivingColor =
 
 		if(typeof LivingColor.rulesList !== "object")
 			LivingColor.rulesList = {};
-		if(LivingColor.rulesList.top)
+		if(LivingColor.rulesList.top !== false)
 			$div.addClass("top");
 		
 		// Render add button
