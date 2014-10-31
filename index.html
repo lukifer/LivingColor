@@ -38,6 +38,9 @@
 				
 				$("#LivingColor .wrap input:eq(0)").focus();
 			});
+
+			if(navigator.userAgent.match(/Firefox/))
+				$("body").addClass("firefox");
 		});
 	</script>
 
@@ -53,7 +56,7 @@
 
 			<div id="logo">
 				<h1>Living <span>Color</span></h1>
-				<h3>Experiment on the colors of your website with real-time feedback</h3>
+				<h3>Experiment on the colors of your website, with real-time feedback</h3>
 			</div> <!-- #logo -->
 
 		</div>
@@ -66,11 +69,11 @@
 		<div class="column grid_5">
 
 			<ul id="Fs-n-Bs">
-				<li>Choose page elements using <a href="#">CSS selectors</a>, or the handy targeting tool (<span class="target_icon"></span>).</li>
-				<li>Play with text color and background color, seeing your changes as they're applied.</li>
+				<li>Choose page elements using <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Getting_started/Selectors">CSS selectors</a>, or the handy targeting tool (<span class="target_icon"></span>).</li>
+				<li>Play with <span class="text_color">text color</span> and <span class="background_color">background color</span>, seeing your changes as they're applied.</li>
 				<li>Click the filter icon (<span class="filters_icon"></span>) to change brightness, contrast, saturation, blur, and more.</li>
 				<li>Save color schemes to compare.</li>
-				<li>Compatible with modern desktop browsers</li>
+				<li>Supports Chrome, Safari, and Firefox 35+.</li>
 				<li><a href="http://opensource.org/licenses/MIT">MIT Licensed</a></li>
 				<!-- <li><a id="try" href="javascript:void(0);">Try it now!</a></li> -->
 			</ul>

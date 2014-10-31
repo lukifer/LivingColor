@@ -65,6 +65,8 @@ window.LivingColor =
 		"#LivingColor li a.icon": "cursor: pointer; display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; opacity: 0.6; ",
 		"#LivingColor li a.remove": "background-image: url('"+LivingColorRemoveIcon()+"'); filter: grayscale(100%); margin-left: 4px;",
 		"#LivingColor li a.filters": "background-image: url('"+LivingColorFiltersIcon()+"'); filter: brightness(10%) grayscale(100%); ",
+		"#LivingColor.nofilters li a.filters": "display: none;",
+		"#LivingColor.nofilters li .selector": "width: 140px;",
 
 		"#LivingColor li a:hover": "opacity: 1.0;",
 		"#LivingColor li a.active": "opacity: 0.8; filter: hue-rotate(180deg) grayscale(30%);",
@@ -189,6 +191,10 @@ window.LivingColor =
 		// Cache our primary interface div
 		var $div = $("#LivingColor");
 		this["$div"] = $div;
+
+		// Older Firefox = No CSS filters
+		if(navigator.userAgent.match(/Firefox\/3[0-4]/))
+			$div.addClass("nofilters");
 	},
 
 	// Fetch list of color schemes from local storage
@@ -681,7 +687,7 @@ window.LivingColor =
 	// Filter Change Event: <input type="range" />
 	"sliderChange": function(e)
 	{
-		if(event.type === "mousemove" && event.which !== 1)
+		if(e.type === "mousemove" && e.which !== 1)
 			return;
 	
 		var $this = $(this);
