@@ -398,6 +398,7 @@ pre {
 	left: -1px;
 	font-size: 32px;
 }
+
 .firefox #container .target_icon::before {
 	font-size: 16px;
 }
