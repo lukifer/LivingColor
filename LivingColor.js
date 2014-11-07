@@ -16,85 +16,6 @@ window.LivingColor =
 	"options": {},
 	"$div": false,
 	"prefix": "",
-
-	"$style": false,
-	"styles":
-	{
-		"#LivingColor": "position: fixed; bottom: 10px; right: 10px; width: 320px; max-height: 350px; z-index: 9999; "
-			+"overflow: hidden; padding: 0; background-color: #ccc; border-radius: 5px; box-shadow: 0 0px 7px 0 black; "
-			+"background-image: url('"+LivingColorImageBG()+"'); "
-			+"transition: top 250ms ease-in-out, bottom 250ms ease-in-out, width 250ms ease-in-out, max-height 250ms ease-in-out;"
-			+"transform: translateZ(0);",
-		"#LivingColor.top": "bottom: auto; top: 10px;",
-		"#LivingColor h4": "position: relative; color: #ddd; background-color: #222; user-select: none; "
-			+"font-size: 12px; font-family: Helvetica; margin: 0; padding: 5px 0 3px; height: 12px;",
-		"#LivingColor h4 a": "display: block; position: absolute; cursor: pointer; opacity: 0.4;",
-		"#LivingColor h4 a:hover": "cursor: pointer; opacity: 0.8;",
-		"#LivingColor h4 a::after": "content: ''; position: absolute; display: block;",
-		"#LivingColor h4 .target": "top: 3px; height: 14px; left: 5px; width: 14px; color: #ddd; overflow: hidden;",
-	//	"#LivingColor h4 .target": "top: 2px; height: 15px; left: 4px; width: 15px; color: #ddd; overflow: hidden;",
-		"#LivingColor h4 .target span": "font-size: 32px; position: relative; top: -19px; left: -2px;",
-	//	"#LivingColor h4 .target span": "font-size: 32px; position: relative; top: -1px; left: -2px;",
-	//	"#LivingColor h4 .target span": "display: inline-block; width: 15px; height: 15px;"
-	//		+"background-image: url('"+LivingColorTargetIcon()+"'); background-repeat: no-repeat;"
-	//		+"filter: brightness(200%);",
-		".living-color-targeting #LivingColor h4 .target": "color: orange; opacity: 1.0;",
-		"#LivingColor h4 .move": "top: 0; height: 20px; right: 25px; width: 22px;",
-		"#LivingColor h4 .move::after": "bottom: 4px; left: 5px; height: 0; width: 0; border-style: solid; border-width: 0 5px 10px 5px; border-color: transparent transparent #ddd transparent;",
-		"#LivingColor.top h4 .move::after": "border-width: 10px 5px 0 5px; border-color: #ddd transparent transparent transparent;",
-		"#LivingColor h4 .minimize": "right: 3px; top: 0; width: 22px; height: 20px;",
-		"#LivingColor h4 .minimize::after": "right: 5px; bottom: 4px; height: 3px; width: 12px; background: #ddd; border-radius: 1px;",
-		"#LivingColor .wrap": "padding: 8px 7px; margin: 0; transition: width 250ms linear;",
-		"#LivingColor.minimized": "width: 27px; max-height: 20px; ",
-		"#LivingColor h4 *": "transition: opacity 120ms linear;",
-		"#LivingColor.minimized .wrap": "overflow: hidden;",
-		"#LivingColor.minimized .minimizehide": "opacity: 0;",
-		"#LivingColor ul": "margin: 0; padding: 0; max-height: 290px; overflow-x: hidden; overflow-y: auto;",
-		"#LivingColor li": "list-style: none; white-space: nowrap; height: 29px; min-height: 29px;",
-		"#LivingColor li input": "font-size: 12px; padding: 5px; margin: 2px 3px; border: 0; border-radius: 3px; box-shadow: 0 0 5px 0px black inset;",
-		"#LivingColor li .selector": "width: 124px;",
-		"#LivingColor .overflown .selector": "width: 104px;",
-		"#LivingColor li .color": "width: 48px; text-align: center; ",
-		"#LivingColor .controls": "margin-top: 5px; white-space: nowrap;",
-		"#LivingColor .controls select": "margin: 0 3px;",
-		"#LivingColor .controls input": "margin: 1px 2px 0;"
-			+"padding: 0 8px; background-color: rgb(192,192,192); color: rgb(0,0,0);"
-			+"border-radius: 0; font-size: 11px; font-family: auto; box-shadow: none;",
-		"#LivingColorAdd": "float: right;",
-
-		"#LivingColor li a.icon": "cursor: pointer; display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; opacity: 0.6; ",
-		"#LivingColor li a.remove": "background-image: url('"+LivingColorRemoveIcon()+"'); filter: grayscale(100%); margin-left: 4px;",
-		"#LivingColor li a.filters": "background-image: url('"+LivingColorFiltersIcon()+"'); filter: brightness(10%) grayscale(100%); ",
-		"#LivingColor.nofilters li a.filters": "display: none;",
-		"#LivingColor.nofilters li .selector": "width: 140px;",
-
-		"#LivingColor li a:hover": "opacity: 1.0;",
-		"#LivingColor li a.active": "opacity: 0.8; filter: hue-rotate(180deg) grayscale(30%);",
-		"#LivingColor li a.active:hover": "opacity: 1.0; filter: hue-rotate(180deg) grayscale(30%);",
-
-		"#LivingColorFilters": "z-index: 10000; position: fixed; right: 5px; display:none;"
-			+"background: threedface; border-color: threedhighlight threedshadow threedshadow threedhighlight;"
-			+"border-width: 1px; border-style: solid; padding: 10px;",
-		"#LivingColorFilters ul": "list-style: none; margin: 0; padding: 0;",
-		"#LivingColorFilters label": "font-size: 12px; color: black;",
-		"#LivingColorFilters label span:first-child": "display: inline-block; text-align: right; margin-right: 2px; width: 65px; white-space: nowrap;",
-		"#LivingColorFilters input": "margin: 0;",
-		"#LivingColorFilters input[type='range']": "position: relative; top: 4px;",
-		"#LivingColorFilters input[type='number']": "width: 35px; appearance: none; border: 0px solid black; background: transparent; text-align: right;",
-		"#LivingColorFilters .suffix": "display: inline-block; backgrounddd: blue; width: 1px; min-height: 11px;",
-		"#LivingColorFilters .suffix::before": "content: '%'; position: relative; left: -13px; font-size: 11px;",
-		"#LivingColorFilters .blur .suffix::before": "content: 'px';",
-		"#LivingColorFilters .hue-rotate .suffix::before": "content: '\\00B0';",
-		"#LivingColorFilters input[type='number']:hover + .suffix": "display: none",
-		"#LivingColorFilters input[type='number']:focus + .suffix": "display: none;",
-		"#LivingColorFilters textarea": "width: 100%; overflow: hidden; margin-top: 10px; font-size: 10px; "
-			+"appearance: none; border: 0; background: transparent; resize: none;",
-		"#LivingColorFilters .reset": "text-align: center;",
-		
-		"#jscolor": "position: fixed !important;",
-		
-		".living-color-target": "opacity: 0.5; cursor: default; cursor: crosshair;",
-	},
 	
 	"attachEvents": function()
 	{
@@ -154,7 +75,8 @@ window.LivingColor =
 					var cssKey = $.trim(cssKeyVal[0]);
 					var cssVal = $.trim(cssKeyVal[1]);
 					
-					if($.inArray(cssKey, ["filter", "transform", "transition", "user-select", "appearance"]) != -1)
+					var prefixedKeys = ["filter", "transform", "transition", "user-select", "appearance", "box-sizing"];
+					if($.inArray(cssKey, prefixedKeys) != -1)
 					{
 						val +=     "-ms-"+cssKey+": "+cssVal+";";
 						val +=    "-moz-"+cssKey+": "+cssVal+";";
@@ -959,11 +881,12 @@ window.LivingColor =
 				+(LivingColor.rulesList.top?"bottom":"top")+'"></a>'
 			+'<a class="minimize" title="Minimize"></a></h4>'
 			+'<div class="wrap"><ul></ul>'
-			+'<div class="controls"><input type="button" id="LivingColorAdd" value="Add Rule" />';
+			+'<div class="controls">'
+				+'<div class="button" id="LivingColorAdd"><input type="button" value="+ Add Rule" /></div>';
 
 		// Render select menu for color schemes
 		var activeName = LivingColor.rulesList.active;
-		html += '<select id="LivingColorList">';
+		html += '<div class="button custom-select ff-hack"><select id="LivingColorList">';
 		$.each(LivingColor.rulesList.names, function(n, name)
 		{
 			html += '<option value="'+name+'"'+(activeName == name ? ' selected="selected"' : '')+'>'+name+'</option>';
@@ -973,7 +896,7 @@ window.LivingColor =
 		html += '<option class="copy">Copy "'+activeName+'"...</option>';
 		html += '<option class="rename">Rename "'+activeName+'"...</option>';
 		html += '<option class="delete">Delete "'+activeName+'"...</option>';
-		html += '</select>';
+		html += '</select></div>';
 
 		html += '</div></div>';
 		$div.html(html);
@@ -1010,10 +933,121 @@ window.LivingColor =
 		+	'<a class="filters icon'+(rule.filters.length ? " active" : "")+'" data-filters="'+rule.filters.join(" ")+'" title="Image filters: '+(rule.filters.length ? rule.filters.join(" ") : "None")+'"></a>'
 		+	'<a class="remove icon" title="Remove"></a>'
 		+	'</li>';
+	},
+	
+	// Styles
+	"$style": false,
+	"styles":
+	{
+		"#LivingColor": "position: fixed; bottom: 10px; right: 10px; width: 320px; max-height: 350px; z-index: 9999; "
+			+"overflow: hidden; padding: 0; background-color: #ccc; border-radius: 5px; box-shadow: 0 0px 7px 0 black; "
+			+"background-image: url('"+LivingColorImageBG()+"'); transform: translateZ(0);"
+			+"transition: top 250ms ease-in-out,bottom 250ms ease-in-out,width 250ms ease-in-out,max-height 250ms ease-in-out;",
+		"#LivingColor.top": "bottom: auto; top: 10px;",
+		"#LivingColor h4": "position: relative; color: #ddd; background-color: #222; user-select: none; "
+			+"font-size: 12px; font-family: Helvetica; margin: 0; padding: 5px 0 3px; height: 12px;",
+		"#LivingColor h4 a": "display: block; position: absolute; cursor: pointer; opacity: 0.4;",
+		"#LivingColor h4 a:hover": "cursor: pointer; opacity: 0.8;",
+		"#LivingColor h4 a::after": "content: ''; position: absolute; display: block;",
+		"#LivingColor h4 .target": "top: 3px; height: 14px; left: 5px; width: 14px; color: #ddd; overflow: hidden;",
+		"#LivingColor h4 .target span": "font-size: 32px; position: relative; top: -19px; left: -2px;",
+		".living-color-targeting #LivingColor h4 .target": "color: orange; opacity: 1.0;",
+		"#LivingColor h4 .move": "top: 0; height: 20px; right: 25px; width: 22px;",
+		"#LivingColor h4 .move::after": "bottom: 4px; left: 5px; height: 0; width: 0;"
+			+"border-style: solid; border-width: 0 5px 10px 5px; border-color: transparent transparent #ddd transparent;",
+		"#LivingColor.top h4 .move::after": "border-width: 10px 5px 0 5px; border-color: #ddd transparent transparent transparent;",
+		"#LivingColor h4 .minimize": "right: 3px; top: 0; width: 22px; height: 20px;",
+		"#LivingColor h4 .minimize::after": "right: 5px; bottom: 4px; height: 3px; width: 12px;"
+			+"background: #ddd; border-radius: 1px;",
+		"#LivingColor .wrap": "padding: 0px; margin: 0; transition: width 250ms linear;",
+		"#LivingColor.minimized": "width: 27px; max-height: 20px; ",
+		"#LivingColor h4 *": "transition: opacity 120ms linear;",
+		"#LivingColor.minimized .wrap": "overflow: hidden;",
+		"#LivingColor.minimized .minimizehide": "opacity: 0;",
+		"#LivingColor ul": "margin: 8px 7px 0 7px; padding: 0; max-height: 290px; overflow-x: hidden; overflow-y: auto;",
+		"#LivingColor li": "list-style: none; white-space: nowrap; height: 29px; min-height: 29px;",
+		"#LivingColor li input": "font-size: 12px; line-height: 12px; padding: 5px; margin: 2px 3px;"
+			+"border: 0; border-radius: 3px; box-shadow: 0 0 3px 0px #444 inset;",
+		"#LivingColor li .selector": "width: 124px;",
+		"#LivingColor .overflown .selector": "width: 104px;",
+		"#LivingColor li .color": "width: 48px; text-align: center; ",
+		"#LivingColor .controls": "margin: 7px 0 0 0; padding: 7px 7px 8px 7px; white-space: nowrap;"
+			+"background-color: rgba(130,125,130,0.3); box-shadow: inset 0 7px 9px -7px rgba(0,0,0,0.4);"
+			+"user-select: none;",
+		"#LivingColor .controls .custom-select": "width: 180px; margin: 0 2px;",
+		"#LivingColor .controls input": "margin: 1px 2px 0; border: 0; height; 12px; padding: 4px 8px 2px 8px;"
+			+"appearance: none; background-color: transparent; color: #444;"
+			+"font-size: 12px; line-height: 12px; font-weight: 700; font-family: helvetica,sans-serif;",
+		"#LivingColor .controls input:hover": "cursor: pointer",
+		"#LivingColorAdd": "float: right;",
+
+		"#LivingColor li a.icon": "cursor: pointer; display: inline-block; width: 16px; height: 16px; position: relative; top: 3px; background-size: 16px 16px; background-position: center; background-repeat: no-repeat; opacity: 0.6; ",
+		"#LivingColor li a.remove": "background-image: url('"+LivingColorRemoveIcon()+"');"
+			+"filter: grayscale(100%); margin-left: 4px;",
+		"#LivingColor li a.filters": "background-image: url('"+LivingColorFiltersIcon()+"');"
+			+"filter: brightness(10%) grayscale(100%);",
+		"#LivingColor.nofilters li a.filters": "display: none;",
+		"#LivingColor.nofilters li .selector": "width: 140px;",
+
+		"#LivingColor li a:hover": "opacity: 1.0;",
+		"#LivingColor li a.active": "opacity: 0.8; filter: hue-rotate(180deg) grayscale(30%);",
+		"#LivingColor li a.active:hover": "opacity: 1.0; filter: hue-rotate(180deg) grayscale(30%);",
+
+		"#LivingColorFilters": "z-index: 10000; position: fixed; right: 5px; display:none;"
+			+"background: threedface; border-color: threedhighlight threedshadow threedshadow threedhighlight;"
+			+"border-width: 1px; border-style: solid; padding: 10px;",
+		"#LivingColorFilters ul": "list-style: none; margin: 0; padding: 0;",
+		"#LivingColorFilters label": "font-size: 12px; color: black;",
+		"#LivingColorFilters label span:first-child": "display: inline-block; text-align: right;"
+			+"margin-right: 2px; width: 65px; white-space: nowrap;",
+		"#LivingColorFilters input": "margin: 0;",
+		"#LivingColorFilters input[type='range']": "position: relative; top: 4px;",
+		"#LivingColorFilters input[type='number']": "width: 35px; appearance: none;"
+			+"border: 0px solid black; background: transparent; text-align: right;",
+		"#LivingColorFilters .suffix": "display: inline-block; backgrounddd: blue; width: 1px; min-height: 11px;",
+		"#LivingColorFilters .suffix::before": "content: '%'; position: relative; left: -13px; font-size: 11px;",
+		"#LivingColorFilters .blur .suffix::before": "content: 'px';",
+		"#LivingColorFilters .hue-rotate .suffix::before": "content: '\\00B0';",
+		"#LivingColorFilters input[type='number']:hover + .suffix": "display: none",
+		"#LivingColorFilters input[type='number']:focus + .suffix": "display: none;",
+		"#LivingColorFilters textarea": "width: 100%; overflow: hidden; margin-top: 10px; font-size: 10px; "
+			+"appearance: none; border: 0; background: transparent; resize: none;",
+		"#LivingColorFilters .reset": "text-align: center;",
+		
+		"#jscolor": "position: fixed !important;",
+		
+		".living-color-target": "opacity: 0.5; cursor: default; cursor: crosshair;",
+		
+		// https://github.com/filamentgroup/select-css
+		"#LivingColor .button": "height: 19px; border: 1px solid #888; border-radius: .3em;"
+			+"background: #f3f3f3; box-shadow: 0 1px 0 1px rgba(0,0,0,.04);"
+			+"background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%);"
+			+"background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5));"
+			+"background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);"
+			+"background: -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);"
+			+"background: -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%);"
+			+"background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);",
+		"#LivingColor .button:hover": "cursor: pointer;",
+		"#LivingColor .custom-select": "position: relative; display:block; margin-top:0.5em; padding:0;",
+		"#LivingColor .custom-select select": "width:100%; height: 19px; margin:0; box-sizing:border-box;"
+			+"background:none; border:1px solid transparent; outline:none;"
+			+"appearance:none; font-size:12px; font-family:helvetica,sans-serif; font-weight:700;"
+			+"color:#444; padding:4px 7px 2px 7px;",
+		"#LivingColor .custom-select::after": 'content:""; position:absolute; width:9px; height:8px; top:50%; right:9px;'
+			+'margin-top:-4px; background-image:url("'+LivingColorImageSelectArrow()+'");'
+			+"background-repeat:no-repeat; background-size:100%; z-index:2; pointer-events:none;",
+		"#LivingColor .custom-select select:hover": "cursor: pointer;",
+		"#LivingColor .custom-select select:focus": "outline:none; box-shadow:0 0 1px 3px rgba(180,222,250,1);"
+			+"background-color:transparent; color:#222; border:1px solid #aaa;",
+		"#LivingColor .custom-select option": "font-weight:400;",
+		".firefox #LivingColor .custom-select": "overflow: hidden;",
+		".firefox #LivingColor .custom-select select": "width: 120%; width: -moz-calc(100% + 3em); width: calc(100% + em);",
 	}
 };
 
 })();
+
+
 
 // Inline data URI images
 // (Evil hack: If these are functions, I can call them before they're declared. EVIL!)
@@ -1044,6 +1078,10 @@ function LivingColorImageBG()
 {
 	return "data:image/jpeg;base64,/9j/4Qw8aHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/Pgo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA1LjEuMiI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+QWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaDwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICAgICAgICAgIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIj4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDoyMjNCQ0QyMzZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwveG1wTU06SW5zdGFuY2VJRD4KICAgICAgICAgPHhtcE1NOkRvY3VtZW50SUQ+eG1wLmRpZDoyMjNCQ0QyNDZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwveG1wTU06RG9jdW1lbnRJRD4KICAgICAgICAgPHhtcE1NOkRlcml2ZWRGcm9tIHJkZjpwYXJzZVR5cGU9IlJlc291cmNlIj4KICAgICAgICAgICAgPHN0UmVmOmluc3RhbmNlSUQ+eG1wLmlpZDoyMjNCQ0QyMTZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwvc3RSZWY6aW5zdGFuY2VJRD4KICAgICAgICAgICAgPHN0UmVmOmRvY3VtZW50SUQ+eG1wLmRpZDoyMjNCQ0QyMjZERUExMUUxQjgxMTgzQzAyOEVDQjQyQjwvc3RSZWY6ZG9jdW1lbnRJRD4KICAgICAgICAgPC94bXBNTTpEZXJpdmVkRnJvbT4KICAgICAgPC9yZGY6RGVzY3JpcHRpb24+CiAgIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/Pv/bAEMAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhANDhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFP/bAEMBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIAGQAZAMBIQACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APpAIuMAMPotLt2jj8cqP8K1OchKbySQMD2p6KpHAz9GoAQrgjCt+PNLhcg/d/LNMY8MvQM2aQxqxxnP1U0gG+SyHCsPyxSjzR1Jx9aAF2ueT8w9TTSn94ZPtQIcEGOhP/AaKAG+aGwAST6YxRjJ+6c+ppgKJCp9B9KMnHPz0AIH7YH5U5PK/uj65oGKxXtz+NNChj94D8RSEPCjHRj7inMcKCAwPvTGMxuOQxJ9qbgL3GP96gQGfBwCn5Z/pRSGVxMpyQgP40CUk/dA/wCBUxDZHGR/U1G0yoPf60AOFwc5wQPw/wAaebgOOo/PFAxROyHAdT7Z/wDrUhuST2H40CFEzHnrSm72gEijcYz7WDzu59zSG63D7x+gpCFS5UL3P1//AFUUwM03DMORn6gU9EGNxOO+MUwHiZUyBuBphueeGA/z70WABc56spHtSeeucgg+vH/1qAE8xXPUjHbApBMCTyD9RTAPtDBvlGPxpfPOc7wB6c0gEkl3YO5R+PWnC4TA5OfUGgBpuTngN+Q/wopgQKwzhnAPsKQ43cZP1yaQDSW3Ywox/smhgqjJ+96ZIoANwxwGz7HIoVSedpA9TimA8Ryscg8fShlkXPygn2FADRvwOpFSAgHkY9cCgBCUDcKDn1oBKk4OPouaAGjzDnEn5rRSAmKMy8Y+tMKkqR8p+hoAFUgYEZHvSjcB2U/Si4Cbgp5bZn2oDOThGDfUCmA8wSEcqM0ihk/5Zrn1oANmegOfTrSFM9UGfQigAC8ensKeF2gcmgBdpPIYj/P1ooAeAqjHyt7bqTCAHEa/jzQA8YOPl/Q0u5V4IA/OkA1+ACp+U+qGkBUfxE/pTAWNkbPpjvmnkI3RefxoAjx67gPrScdzwPegBzYAB5pvAUenrmkA1o0zzj86KYCmUtna4I9KQSFzycn2yKAJSSy4JA98VHuEfqw+lIBwlWTgrjjrSlVIwOD+FACFdgAAYjv8woPI6HH1/wDrUAOjVW6cfXk09sNkZXj1FAEeVTjI/wCAmjzNv8QHvmgBrTpnlwf+BUUWAiQAdWxn1NTYbA4H1z/9amAwszZBVjURBH98H25/pQAsQfOSxX6jrTiQh++B+dIA80MMGQke1GI2T7rfiaYAAo4OV9xzTiVXgOT9aAE3N2K49zStG44yGFADCnsPzP8AjRSAVdoPJ/TpT9wZcDdTAb5TbiMnP1NLsZQc4J+tIBBCw/hAHruxUckZB+baB9TTAVC3RWB+q5p4LEfNk+4AoAUsVYAcj3NJ17L196QCsmOVHFMyy8ZOPQUwADdyeD9BRSsBa8odTGpA9jTHQHsQaAHpEmMEYx2LU7ywD8obH0z/AFoAQggY2H6mozDubqnXpimA5oipHK/QD/69N2ndnKH2C1NwHFd/GASPao/KyeePwpgSCLYOWY5/2cUqxJ1+b/vmgBTCp6qD9R/9eiiwFlIMcNjj/YpGhQt0P/fNIBrRojcAkjttoEZxkEL+dAB5TAgkq3HYn/CpRCf7pagBPIIGDjH+1TFhCkggH8aAFKOp4Cgf59qCDg/OM+2OaAGiE/WneQR1B/DmgBotWPQsP+AZooHcfI2GXgfjSjAAwAM9aAJI0DNznpT2X5upA9M0CI9w3kbRUhbBIx0GaQ0RGVsE8CkR2k6n8gKYiQxgEDrTzEGKrkgH0NIYvkqCVxwBStEq8AfpTEROoVsYz9aKQH//2Q==";
 	//return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAQMAAABIeJ9nAAAABlBMVEX///8AAABVwtN+AAAADElEQVQI12NoYHAAAAHEAMFJRSpJAAAAAElFTkSuQmCC';
+}
+function LivingColorImageSelectArrow()
+{
+	return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAPCAYAAADphp8SAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMJJREFUeNpinDRlugMDAwMIUwRYgPgBEOcDsQAlBjHl5WSCDJpIoYM2MMJYQC/eB1IKZBjyAYgNmZAEEsl0zUSQrxiRRYCuWg+kAkgw5ALQEENwGKFJJEKdSiwohAc2sijQdJAhjUQasgCo/gBWg6CGTQA5mYgALkSJfhwKCQV8I9T1+A0CKgK5aAIOQw5AXc1AjIsYoGH1AV8AE2UQ1OnomiZAXctAiotAhi0AeQXKfYAvRpmIiGZYwBeiBzAyAAgwAO6ENKpThEdEAAAAAElFTkSuQmCC';
 }
 
 
