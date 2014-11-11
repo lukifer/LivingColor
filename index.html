@@ -38,6 +38,30 @@
 				
 				$("#LivingColor .wrap input:eq(0)").focus();
 			});
+			
+			$(document).on("mousemove", "#LivingColorFilters .sepia input[type='range']", function(e)
+			{
+				if(e.which !== 1 || LivingColor['$selector'].val() !== '#demo_stephen')
+					return true;
+				
+				var val = parseInt($("#LivingColorFilters .sepia input[type='range']").val());
+				
+				var $div = $("#demo_stephen");
+				if(val > 20)
+				{
+					var opacity = val / 50;
+					opacity = ((opacity * opacity) / 4);
+					$div.css("opacity", opacity * 0.95).show();
+
+					if(val > 80)
+					{
+						var invert = (val - 80) / 10;
+						invert = ((invert * invert) / 4);
+						$div[0].style[LivingColor.prefixedFilterRule()] = "invert("+(100*invert)+"%)";
+					}
+				}
+				else $div.hide();
+			});
 
 			if(navigator.userAgent.match(/Firefox/))
 				$("body").addClass("firefox");
@@ -46,6 +70,8 @@
 
 </head>
 <body>
+			
+<div id="demo_stephen"></div>
 	
 <a id="ribbon" href="http://github.com/lukifer/LivingColor"></a>
 

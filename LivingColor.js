@@ -14,14 +14,16 @@ window.LivingColor =
 	"rules": [],
 	"rulesList": [],
 	"options": {},
-	"$div": false,
 	"prefix": "",
+	"$div": false,
+	"$selector": false,
 	
 	"attachEvents": function()
 	{
 		$(document)
 			.on("click", "#LivingColorAdd", LivingColor.addRule)
 			.on("change", "#LivingColor input[type=text]", LivingColor.inputChange)
+			.on("focus", "#LivingColor input[type=text]", LivingColor.inputFocus)
 			.on("keydown", "#LivingColor input", LivingColor.inputKeyDown)
 			.on("click", "#LivingColor .minimize", LivingColor.minimize)
 			.on("click", "#LivingColor .move", LivingColor.togglePosition)
@@ -330,6 +332,12 @@ window.LivingColor =
 
 		localStorage.setItem("LC_colorRules"+LivingColor.rulesList.active, JSON.stringify(LivingColor.rules));
 	},
+	
+	// Cache the selector div (jscolor does all the other heavy lifting)
+	"inputFocus": function(e)
+	{
+		LivingColor['$selector'] = $(this).parent("li").children(".selector");
+	},
 
 	// Listen for Escape key
 	"inputKeyDown": function(e)
@@ -530,6 +538,7 @@ window.LivingColor =
 		var $filters = $("#LivingColorFilters");
 		var top = $a.offset().top;
 
+		LivingColor['$selector'] = $li.find(".selector");
 		$filters.data("link", this);
 	
 		// Top mode: appear just below text box
@@ -968,6 +977,9 @@ window.LivingColor =
 		"#LivingColor li": "list-style: none; white-space: nowrap; height: 29px; min-height: 29px;",
 		"#LivingColor li input": "font-size: 12px; line-height: 12px; padding: 5px; margin: 2px 3px;"
 			+"border: 0; border-radius: 3px; box-shadow: 0 0 3px 0px #444 inset;",
+		"#LivingColor li input::-webkit-input-placeholder": "line-height: 16px;",
+		"#LivingColor li input::-moz-placeholder": "line-height: 16px;",
+		"#LivingColor li input::placeholder": "line-height: 16px;",
 		"#LivingColor li .selector": "width: 124px;",
 		"#LivingColor .overflown .selector": "width: 104px;",
 		"#LivingColor li .color": "width: 48px; text-align: center; ",
