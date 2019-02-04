@@ -19,9 +19,9 @@
 		$(function()
 		{
 			prettyPrint();
-			
+
 			LivingColor.start({
-				"minimized": true,
+				// "minimized": true,
 				"defaultScheme": [
 					{ "selector": "body",			"color": "4D2201", "backgroundColor": "FFD4B8", "filters": [] },
 					{ "selector": "h1",				"color": "ED5118", "backgroundColor":       "", "filters": [] },
@@ -35,17 +35,17 @@
 			{
 				if($("#LivingColor").is(".minimized"))
 					$("#LivingColor h4 a.minimize").click();
-				
+
 				$("#LivingColor .wrap input:eq(0)").focus();
 			});
-			
+
 			$(document).on("mousemove", "#LivingColorFilters .sepia input[type='range']", function(e)
 			{
 				if(e.which !== 1 || LivingColor['$selector'].val() !== '#demo_stephen')
 					return true;
-				
+
 				var val = parseInt($("#LivingColorFilters .sepia input[type='range']").val());
-				
+
 				var $div = $("#demo_stephen");
 				if(val > 20)
 				{
@@ -70,9 +70,9 @@
 
 </head>
 <body>
-			
+
 <div id="demo_stephen"></div>
-	
+
 <a id="ribbon" href="http://github.com/lukifer/LivingColor"></a>
 
 <div id="container">
@@ -91,7 +91,7 @@
 
 
 	<div class="row">
-		
+
 		<div class="column grid_5">
 
 			<ul id="Fs-n-Bs">
@@ -132,20 +132,20 @@
 		<!-- .grid_5 -->
 
 		<div class="column grid_7">
-			
+
 			<div id="demo_frame">
 				<img id="demo_image" src="assets/spacehawking.jpg" alt="Lego Stephen Hawking In Space" />
 			</div>
-			
+
 			<h5 id="demo_subtitle">Whatever you do, don't make Professor Hawking sepia.<br>You wouldn't like him when he's sepia.</h5>
 			<!-- <h5 id="demo_subtitle">Click the filter icon (<span class="filters_icon"></span>) to change contrast, saturation and more!</h5> -->
-		
+
 		</div>
 		<!-- .grid_7 -->
-			
+
 	</div>
-	
-	
+
+
 	<div class="row">
 
 		<div class="column grid_12">
@@ -166,7 +166,7 @@ $(function() { LivingColor.start(); }
 		</div>
 
 	</div>
-	
+
 
 
 
@@ -174,7 +174,7 @@ $(function() { LivingColor.start(); }
 		<div class="column grid_12">
 			<h2>Fastidiously Asked Questions</h2>
 		</div>
-		
+
 		<div class="column grid_4">
 			<p><b>Q: Why don't you have any questions yet?</b></p>
 			<p>A: I am Jack's superfluous paradox.</p>
@@ -182,13 +182,13 @@ $(function() { LivingColor.start(); }
 
 		<div class="column grid_4">
 		</div>
-		
+
 		<div class="column grid_4">
 		</div>
 	</div>
 
 
-	
+
 	<div class="row">
 		<div class="column grid_6">
 			<h2>Version History</h2>
@@ -207,8 +207,8 @@ $(function() { LivingColor.start(); }
 			</ul>
 		</div>
 	</div>
-	
-</div>	
+
+</div>
 
 
 <div id="footer">
@@ -236,9 +236,9 @@ $(function() { LivingColor.start(); }
 	</div>
 
 </div>
-	
 
-	
+
+
 
 </body>
 </html>
